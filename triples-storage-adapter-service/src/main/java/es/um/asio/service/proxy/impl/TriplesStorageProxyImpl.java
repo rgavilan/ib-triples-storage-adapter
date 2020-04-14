@@ -3,6 +3,7 @@ package es.um.asio.service.proxy.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.service.proxy.TriplesStorageProxy;
 import es.um.asio.service.service.TriplesStorageService;
 
@@ -17,6 +18,11 @@ public class TriplesStorageProxyImpl implements TriplesStorageProxy {
      */
     @Autowired
     private TriplesStorageService service;
+
+	@Override
+	public void save(ManagementBusEvent message) {
+		this.service.save(message);		
+	}
     
 //    /**
 //     * DTO to entity mapper.

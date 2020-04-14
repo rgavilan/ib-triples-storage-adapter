@@ -24,12 +24,10 @@ public class MessageController {
      */
     @Autowired
     private TriplesStorageProxy proxy;
-
     
-    // @Secured(Role.ADMINISTRATOR_ROLE)       throws TripleStoreException
     @PostMapping
     public void save(@RequestBody @Validated(ManagementBusEvent.class) final ManagementBusEvent message) {
-        System.out.println("Yessss");
+        this.proxy.save(message);        
     }
 
     /**
