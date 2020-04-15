@@ -27,16 +27,16 @@ import es.um.asio.service.util.TrellisUtils;
 public class TrellisStorageServiceImpl implements TriplesStorageService {
 
 	/**
-     * Logger
-     */
-    private final Logger logger = LoggerFactory.getLogger(TrellisStorageServiceImpl.class);
-    
-    @Autowired
-    private TrellisUtils trellisUtils;
-    
-    @Value("${app.trellis.endpoint}")
-    private String trellisUrlEndPoind;
-	
+	 * Logger
+	 */
+	private final Logger logger = LoggerFactory.getLogger(TrellisStorageServiceImpl.class);
+
+	@Autowired
+	private TrellisUtils trellisUtils;
+
+	@Value("${app.trellis.endpoint}")
+	private String trellisUrlEndPoind;
+
 	/**
 	 * Process.
 	 *
@@ -56,26 +56,41 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			break;
 		}
 	}
-	
+
 	/**
 	 * Save.
 	 *
 	 * @param message the message
 	 */
 	public void save(ManagementBusEvent message) {
-		logger.info(message.toString());	
-		
+		logger.info(message.toString());
+
 		Model model = trellisUtils.toObject(message.getModel());
-		
-		Response postResponse = RestAssured.given()
-				.contentType(MediaTypes.TEXT_TURTLE)
-				.body(model, new RdfObjectMapper())
-				.post(trellisUrlEndPoind);
-		
+
+		Response postResponse = RestAssured.given().contentType(MediaTypes.TEXT_TURTLE)
+				.body(model, new RdfObjectMapper()).post(trellisUrlEndPoind);
+
 		if (postResponse.getStatusCode() != HttpStatus.SC_CREATED) {
 			logger.error("Error saving the object: " + message.getModel());
 			logger.error("cause: " + postResponse.getBody().asString());
 			throw new RuntimeTrellisException("Error saving in Trellis the object: " + message.getModel());
-		} 
-	}	
+		}
+	}
+
+	/**
+	 * Gets the.
+	 *
+	 * @param resourceUri the resource uri
+	 * @return the model
+	 */
+	public Model get(String resourceUri) {
+		Model model = RestAssured.given()
+				.header("Accept", MediaTypes.TEXT_TURTLE)
+				.expect().statusCode(HttpStatus.SC_OK)
+				.when().get(resourceUri)
+				.as(Model.class, new RdfObjectMapper(resourceUri));
+
+		return model;
+
+	}
 }

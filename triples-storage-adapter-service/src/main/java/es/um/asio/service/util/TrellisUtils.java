@@ -1,6 +1,7 @@
 package es.um.asio.service.util;
 
 import java.io.StringReader;
+import java.io.StringWriter;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -23,5 +24,19 @@ public class TrellisUtils {
 		RDFDataMgr.read(modelFromString, stringReader, null, RDFLanguages.RDFXML);
 		
 		return modelFromString;
+	}
+	
+	/**
+	 * Method to transform model to string
+	 *
+	 * @param model  the model
+	 * @param format the format
+	 * @return the string
+	 */
+	public static String toString(Model model) {
+		String syntax = "RDF/XML-ABBREV";
+		StringWriter out = new StringWriter();
+		model.write(out, syntax);
+		return out.toString();
 	}
 }
