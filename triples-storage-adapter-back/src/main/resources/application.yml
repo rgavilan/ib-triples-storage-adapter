@@ -10,7 +10,10 @@ app:
       - X-Requested-With
       - Content-Type
     maxAge: 3600
-
+    
+  # Trellis
+  trellis-endpoint: http://localhost:80
+           
   # Cache configuration
   cache:
     embedded:

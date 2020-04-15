@@ -26,8 +26,8 @@ public class MessageController {
     private TriplesStorageProxy proxy;
     
     @PostMapping
-    public void save(@RequestBody @Validated(ManagementBusEvent.class) final ManagementBusEvent message) {
-        this.proxy.save(message);        
+    public void processMessage(@RequestBody @Validated(ManagementBusEvent.class) final ManagementBusEvent message) {
+        this.proxy.process(message);        
     }
 
     /**

@@ -7,5 +7,5 @@ import es.um.asio.abstractions.domain.ManagementBusEvent;
  */
 public interface TriplesStorageProxy {
 
-	void save(ManagementBusEvent message);
+	void process(ManagementBusEvent message);
 }
