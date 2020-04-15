@@ -12,7 +12,11 @@ app:
     maxAge: 3600
     
   # Trellis
-  trellis-endpoint: http://localhost:80
+  trellis:
+    enabled: true
+    endpoint: http://localhost:80
+  
+  
            
   # Cache configuration
   cache:

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.trellisldp.api.RuntimeTrellisException;
 
@@ -21,8 +22,8 @@ import es.um.asio.service.util.TrellisUtils;
 /**
  * Triples service implementation for Trellis.
  */
+@ConditionalOnProperty(prefix = "app.trellis", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Service
-//TODO @ConditionalOnProperty()
 public class TrellisStorageServiceImpl implements TriplesStorageService {
 
 	/**
@@ -33,7 +34,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
     @Autowired
     private TrellisUtils trellisUtils;
     
-    @Value("${app.trellis-endpoint}")
+    @Value("${app.trellis.endpoint}")
     private String trellisUrlEndPoind;
 	
 	/**
