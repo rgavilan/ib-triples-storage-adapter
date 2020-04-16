@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import es.um.asio.service.service.TriplesStorageService;
 import es.um.asio.service.service.impl.TrellisStorageServiceImpl;
+import es.um.asio.service.util.TrellisUtils;
 
 @RunWith(SpringRunner.class)
 public class TriplesStorageServiceTest {
@@ -25,6 +26,11 @@ public class TriplesStorageServiceTest {
         @Bean
         public TriplesStorageService userService() {
             return new TrellisStorageServiceImpl();
+        }
+        
+        @Bean
+        public TrellisUtils trellisUtils() {
+        	return new TrellisUtils();
         }
     }
     
