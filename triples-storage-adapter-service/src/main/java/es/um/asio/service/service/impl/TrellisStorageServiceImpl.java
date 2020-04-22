@@ -1,5 +1,6 @@
 package es.um.asio.service.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
@@ -63,17 +64,21 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	 * @param message the message
 	 */
 	public void save(ManagementBusEvent message) {
-		logger.info(message.toString());
+		logger.info("Saving object in trellis : " + message.toString());
 
-		Model model = trellisUtils.toObject(message.getModel());
-
-		Response postResponse = RestAssured.given().contentType(MediaTypes.TEXT_TURTLE)
-				.body(model, new RdfObjectMapper()).post(trellisUrlEndPoind);
-
-		if (postResponse.getStatusCode() != HttpStatus.SC_CREATED) {
-			logger.error("Error saving the object: " + message.getModel());
-			logger.error("cause: " + postResponse.getBody().asString());
-			throw new RuntimeTrellisException("Error saving in Trellis the object: " + message.getModel());
+		if(StringUtils.isNoneBlank(message.getIdModel())) {
+			Model model = trellisUtils.toObject(message.getModel());
+			
+			Response postResponse = RestAssured.given()
+					.contentType(MediaTypes.TEXT_TURTLE)
+					.header("slug", message.getIdModel())
+					.body(model, new RdfObjectMapper()).post(trellisUrlEndPoind);
+			
+			if (postResponse.getStatusCode() != HttpStatus.SC_CREATED) {
+				logger.error("Error saving the object: " + message.getModel());
+				logger.error("cause: " + postResponse.getBody().asString());
+				throw new RuntimeTrellisException("Error saving in Trellis the object: " + message.getModel());
+			}
 		}
 	}
 
