@@ -51,3 +51,14 @@ Se ha añadido la posibilidad de utilizar Swagger, el cual se ha configurado com
 Para acceder a Swagger, se utilizará la siguiente URL:
 
 http://localhost:8080/swagger-ui.html
+
+## Instalación en entorno real
+
+Será preciso configurar las siguientes variables de entorno cuando se instale en un entorno real:
+
+|Variable|Descripción|Valor por defecto|
+|---|---|---|
+|`APP_TRELLIS_ENABLED`|Flag que indicea si se debe persistir en Trellis|true|
+|`APP_TRELLIS_ENDPOINT`|URL del servicio de Trellis|http://localhost:80|
+
+
