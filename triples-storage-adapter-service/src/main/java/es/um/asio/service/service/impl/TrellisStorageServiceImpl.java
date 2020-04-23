@@ -177,7 +177,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	 */
 	public void createEntry(ManagementBusEvent message) {
 		Model model = trellisUtils.toObject(message.getModel());
-		String urlContainer =  trellisUrlEndPoint + message.getClassName();
+		String urlContainer =  trellisUrlEndPoint + "/" + message.getClassName();
 		
 		Response postResponse = RestAssured.given()
 				.contentType(MediaTypes.TEXT_TURTLE)
