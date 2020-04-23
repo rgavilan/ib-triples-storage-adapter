@@ -58,7 +58,7 @@ Será preciso configurar las siguientes variables de entorno cuando se instale e
 
 |Variable|Descripción|Valor por defecto|
 |---|---|---|
-|`APP_TRELLIS_ENABLED`|Flag que indicea si se debe persistir en Trellis|true|
+|`APP_TRELLIS_ENABLED`|Flag que indica si se debe persistir en Trellis|true|
 |`APP_TRELLIS_ENDPOINT`|URL del servicio de Trellis|http://localhost:80|
 
 
