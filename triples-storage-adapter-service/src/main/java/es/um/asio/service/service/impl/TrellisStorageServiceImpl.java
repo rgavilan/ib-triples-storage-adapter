@@ -108,11 +108,6 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	public boolean existsContainer(ManagementBusEvent message) {
 		boolean result = false;
 		
-		// FIXME remove
-		if("${app.trellis.endpoint}".equals(trellisUrlEndPoint)) {
-			trellisUrlEndPoint = "http://localhost:80/";			
-		}
-		
 		String urlContainer =  trellisUrlEndPoint + message.getClassName();
 		Model model;
 		try {
@@ -136,12 +131,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	 */
 	public void createContainer(ManagementBusEvent message) {
 		logger.info("Creating a container");
-				
-		// FIXME remove
-		if("${app.trellis.endpoint}".equals(trellisUrlEndPoint)) {
-			trellisUrlEndPoint = "http://localhost:80/";			
-		}
-								
+												
 		Model model = ModelFactory.createDefaultModel();
 		model.createProperty("http://hercules.org");
 		Resource resourceProperties = model.createResource();
@@ -162,7 +152,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 					.post(trellisUrlEndPoint);
 			
 			if (postResponse.getStatusCode() != HttpStatus.SC_CREATED) {
-				logger.error("Error creating container cause " + postResponse.getStatusCode());
+				logger.warn("The container already exists: " + postResponse.getStatusCode());
 			} 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
