@@ -153,7 +153,9 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			
 			if (postResponse.getStatusCode() != HttpStatus.SC_CREATED) {
 				logger.warn("The container already exists: " + postResponse.getStatusCode());
-			} 
+			} else {
+				logger.info("GRAYLOG-TS Creado contenedor de tipo: " + message.getClassName());
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
@@ -178,6 +180,8 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			logger.error("Error saving the object: " + message.getModel());
 			logger.error("cause: " + postResponse.getBody().asString());
 			throw new RuntimeTrellisException("Error saving in Trellis the object: " + message.getModel());
+		} else {
+			logger.info("GRAYLOG-TS Creado recurso en trellis de tipo: " + message.getClassName());
 		}
 	}
 }
