@@ -108,7 +108,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	public boolean existsContainer(ManagementBusEvent message) {
 		boolean result = false;
 		
-		String urlContainer =  trellisUrlEndPoint + message.getClassName();
+		String urlContainer =  trellisUrlEndPoint + "/" + message.getClassName();
 		Model model;
 		try {
 			model = RestAssured.given()
@@ -178,6 +178,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 		
 		if (postResponse.getStatusCode() != HttpStatus.SC_CREATED) {
 			logger.error("Error saving the object: " + message.getModel());
+			logger.error("Operation: " + message.getOperation());
 			logger.error("cause: " + postResponse.getBody().asString());
 			throw new RuntimeTrellisException("Error saving in Trellis the object: " + message.getModel());
 		} else {
