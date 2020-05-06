@@ -53,6 +53,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			this.save(message);
 			break;
 		case UPDATE:
+		    this.update(message);
 			break;
 		case DELETE:
 		    this.delete(message);
@@ -98,6 +99,15 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 		}
 	}
 	
+	private void update(ManagementBusEvent message) {
+        logger.info("Updating object in trellis : " + message.toString());
+
+        if(StringUtils.isNoneBlank(message.getIdModel())) {            
+            // we update the entry in trellis
+            updateEntry(message);
+        }
+    }
+    
 	
 	/**
 	 * Delete.
@@ -209,7 +219,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
      * @param message the message
      */
     public void deleteEntry(ManagementBusEvent message) {        
-        String resourceID = getResourceID(message);
+        String resourceID = trellisUtils.toResourceId(message.getIdModel());
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
         
         Response deleteResponse = RestAssured.given().delete(urlContainer);
@@ -224,16 +234,23 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
         }
     }    
     
-    /**
-     * Gets the resource ID.
-     *
-     * @param message the message
-     * @return the resource ID
-     */
-    private String getResourceID(ManagementBusEvent message) {
-        //According Trellis documentation, Any trailing hashURI values (#foo) are removed as are any query parameters (?bar). Spaces and slashes are converted to underscores.
-        //https://www.trellisldp.org/docs/trellis/current/apidocs/org/trellisldp/http/core/Slug.html
-        return message.getIdModel().split("#")[0].split("\\?")[0].trim().replaceAll("[\\s/]+", "_");
-    }
-     
+    public void updateEntry(ManagementBusEvent message) {        
+        String resourceID = trellisUtils.toResourceId(message.getIdModel());
+        String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
+        
+        Model model = trellisUtils.toObject(message.getModel());        
+        Response postResponse = RestAssured.given()
+                .contentType(MediaTypes.TEXT_TURTLE)
+                .body(model, new RdfObjectMapper()).put(urlContainer);
+        
+        if (postResponse.getStatusCode() != HttpStatus.SC_OK && postResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
+            logger.error("Error updating the object: " + message.getModel());
+            logger.error("Operation: " + message.getOperation());
+            logger.error("cause: " + postResponse.getBody().asString());
+            throw new RuntimeTrellisException("Error updating in Trellis the object: " + message.getModel());
+        } else {
+            logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: " + message.getClassName());
+        }
+    }    
+  
 }
