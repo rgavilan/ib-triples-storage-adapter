@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.um.asio.abstractions.domain.ManagementBusEvent;
+import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.proxy.TriplesStorageProxy;
 import es.um.asio.service.service.TriplesStorageService;
 
@@ -20,7 +21,7 @@ public class TriplesStorageProxyImpl implements TriplesStorageProxy {
     private TriplesStorageService service;
 
 	@Override
-	public void process(ManagementBusEvent message) {
+	public void process(ManagementBusEvent message) throws TripleStoreException {
 		this.service.process(message);		
 	}
 

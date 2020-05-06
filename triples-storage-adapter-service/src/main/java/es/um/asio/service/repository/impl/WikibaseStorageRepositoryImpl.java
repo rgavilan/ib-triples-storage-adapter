@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
@@ -21,6 +22,10 @@ import es.um.asio.service.repository.WikibaseStorageRepository;
 import es.um.asio.service.util.WikibaseConstants;
 import es.um.asio.service.wikibase.WikibaseTemplate;
 
+/**
+ * The Class WikibaseStorageRepositoryImpl.
+ */
+@Component
 public class WikibaseStorageRepositoryImpl implements WikibaseStorageRepository {
 
 	

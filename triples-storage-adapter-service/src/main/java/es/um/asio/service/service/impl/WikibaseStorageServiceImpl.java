@@ -3,15 +3,20 @@ package es.um.asio.service.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.repository.WikibaseStorageRepository;
-import es.um.asio.service.service.WikibaseStorageService;
+import es.um.asio.service.service.TriplesStorageService;
 
-public class WikibaseStorageServiceImpl implements WikibaseStorageService {
+@ConditionalOnProperty(prefix = "app.wikibase", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Service
+public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	
 	private final Logger logger = LoggerFactory.getLogger(WikibaseStorageServiceImpl.class);
 	
@@ -19,11 +24,11 @@ public class WikibaseStorageServiceImpl implements WikibaseStorageService {
 	private WikibaseStorageRepository wikibaseStorageRepository;
 	
 	@Override
-	public void save(String message) throws TripleStoreException {
+	public void process(ManagementBusEvent message) throws TripleStoreException {
 		if (this.logger.isDebugEnabled()) {
             this.logger.debug("Insert new message: {}", message);
         }
-
+/*
         final JsonObject jMessage = JsonParser.parseString(message).getAsJsonObject();
 
         final String idMessage = jMessage.get("id").getAsString();
@@ -36,7 +41,7 @@ public class WikibaseStorageServiceImpl implements WikibaseStorageService {
         }
 
         this.wikibaseStorageRepository.save(jData);
-
+*/
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Wikidata updated");
         }
