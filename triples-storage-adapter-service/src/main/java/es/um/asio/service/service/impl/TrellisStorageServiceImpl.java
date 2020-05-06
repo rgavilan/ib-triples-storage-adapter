@@ -55,6 +55,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 		case UPDATE:
 			break;
 		case DELETE:
+		    this.delete(message);
 			break;
 		default:
 			break;
@@ -95,6 +96,21 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			// we insert the entry in trellis
 			createEntry(message);
 		}
+	}
+	
+	
+	/**
+	 * Delete.
+	 *
+	 * @param message the message
+	 */
+	private void delete(ManagementBusEvent message) {
+	    logger.info("Deleting object in trellis : " + message.toString());
+
+        if(StringUtils.isNoneBlank(message.getIdModel())) {            
+            // we delete the entry in trellis
+            deleteEntry(message);
+        }
 	}
 	
 	
@@ -185,4 +201,39 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			logger.info("GRAYLOG-TS Creado recurso en trellis de tipo: " + message.getClassName());
 		}
 	}
+	
+	
+	 /**
+     * Deletes the entry.
+     *
+     * @param message the message
+     */
+    public void deleteEntry(ManagementBusEvent message) {        
+        String resourceID = getResourceID(message);
+        String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
+        
+        Response deleteResponse = RestAssured.given().delete(urlContainer);
+       
+        if (deleteResponse.getStatusCode() != HttpStatus.SC_OK && deleteResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
+            logger.error("Error deleting the object: " + message.getModel());
+            logger.error("Operation: " + message.getOperation());
+            logger.error("cause: " + deleteResponse.getBody().asString());
+            throw new RuntimeTrellisException("Error deleting in Trellis the object: " + message.getModel());
+        } else {
+            logger.info("GRAYLOG-TS Eliminado recurso en trellis de tipo: " + message.getClassName());
+        }
+    }    
+    
+    /**
+     * Gets the resource ID.
+     *
+     * @param message the message
+     * @return the resource ID
+     */
+    private String getResourceID(ManagementBusEvent message) {
+        //According Trellis documentation, Any trailing hashURI values (#foo) are removed as are any query parameters (?bar). Spaces and slashes are converted to underscores.
+        //https://www.trellisldp.org/docs/trellis/current/apidocs/org/trellisldp/http/core/Slug.html
+        return message.getIdModel().split("#")[0].split("\\?")[0].trim().replaceAll("[\\s/]+", "_");
+    }
+     
 }
