@@ -55,7 +55,7 @@ public class CreateItemTest {
 		// PropertyIdValue property107 = new PropertyIdValueImpl("P1", siteIri);
 		// PropertyIdValue property108 = new PropertyIdValueImpl("P2", siteIri);
 						
-		final Statement statement1 = StatementBuilder.forSubjectAndProperty(noid, stringProperty1).withValue(Datamodel.makeStringValue("jan107")).build();
+		final Statement statement1 = StatementBuilder.forSubjectAndProperty(noid, Datamodel.makeWikidataPropertyIdValue("P245962")).withValue(Datamodel.makeStringValue("jan107")).build();
 					
 
 		final ItemDocument itemDocument = ItemDocumentBuilder.forItemId(noid).withLabel("Wikidata Toolkit test", "en")
