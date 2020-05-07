@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
 import org.wikidata.wdtk.datamodel.helpers.PropertyDocumentBuilder;
 import org.wikidata.wdtk.datamodel.helpers.StatementBuilder;
+import org.wikidata.wdtk.datamodel.implementation.MonolingualTextValueImpl;
 import org.wikidata.wdtk.datamodel.implementation.PropertyIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
@@ -48,6 +50,7 @@ public class CreateItemTest {
 		// connection.login("my username", "my password");
 		final WikibaseDataEditor wbde = new WikibaseDataEditor(connection, siteIri);
 
+		
 		// Find some test properties on test.wikidata.org:
 		findSomeStringProperties(connection);
 
@@ -70,12 +73,20 @@ public class CreateItemTest {
 		
 		// PropertyIdValue property107 = new PropertyIdValueImpl("P1", siteIri);
 		// PropertyIdValue property108 = new PropertyIdValueImpl("P2", siteIri);
-						
-		final Statement statement1 = StatementBuilder.forSubjectAndProperty(noid, Datamodel.makeWikidataPropertyIdValue("P245962")).withValue(Datamodel.makeStringValue("jan107")).build();
+					
+		var property = createAndRetrieveNewProperty(wbde, connection);
+        
+		final Statement statement1 = 
+		        StatementBuilder.forSubjectAndProperty(noid, property.getEntityId())
+		        .withValue(Datamodel.makeStringValue("jan107"))
+		        .build();
 					
 
-		final ItemDocument itemDocument = ItemDocumentBuilder.forItemId(noid).withLabel("Wikidata Toolkit test", "en")
-				.withStatement(statement1).build();
+		final ItemDocument itemDocument = ItemDocumentBuilder
+		        .forItemId(noid)
+		        .withLabel("Wikidata Toolkit test", "en")
+				.withStatement(statement1)
+				.build();
 		
 		ItemDocument newItemDocument = wbde.createItemDocument(itemDocument,
 				"Wikidata Toolkit example test item creation", Collections.emptyList());
@@ -85,6 +96,50 @@ public class CreateItemTest {
 				+ " (see http://localhost:8181/w/index.php?title=" + newItemId.getId() + "&oldid="
 				+ newItemDocument.getRevisionId() + " for this version)");
 
+	}
+	
+	
+	private static PropertyDocument createAndRetrieveNewProperty(final WikibaseDataEditor wbde, final ApiConnection connection) throws MediaWikiApiErrorException, IOException {
+	    PropertyDocument propertyDocument = PropertyDocumentBuilder
+	            .forPropertyIdAndDatatype(PropertyIdValue.NULL, DatatypeIdValue.DT_STRING)
+                .withDescription("Description1", "en")
+                .withLabel("Label1", "en") 
+                .build();
+	    
+	    
+        try {
+            wbde.createPropertyDocument(propertyDocument, StringUtils.EMPTY,null);
+        } catch (IOException | MediaWikiApiErrorException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        
+        final WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, siteIri);
+        wbdf.getFilter().setLanguageFilter(Collections.singleton("en"));
+        
+        final ArrayList<PropertyIdValue> stringProperties = new ArrayList<>();
+
+        PropertyDocument property = null;
+        int propertyNumber = 1;
+        while (property == null) {
+            final ArrayList<String> fetchProperties = new ArrayList<>();
+            for (int i = propertyNumber; i < (propertyNumber + 10); i++) {
+                fetchProperties.add("P" + i);
+            }
+            propertyNumber += 10;
+            final Map<String, EntityDocument> results = wbdf.getEntityDocuments(fetchProperties);
+            for (final EntityDocument ed : results.values()) {
+                final PropertyDocument pd = (PropertyDocument) ed;
+                if (DatatypeIdValue.DT_STRING.equals(pd.getDatatype().getIri()) 
+                        && pd.getLabels().containsValue(new MonolingualTextValueImpl("Label1", "en"))
+                        && pd.getDescriptions().containsValue(new MonolingualTextValueImpl("Description1", "en"))) {                    
+                    System.out.println("* Found string property " + pd.getEntityId().getId() + " (" + pd.getLabels().get("en") + ")");
+                    property = pd;
+                }
+            }
+        }
+
+        return property;
 	}
 
 	public static void findSomeStringProperties(final ApiConnection connection)
