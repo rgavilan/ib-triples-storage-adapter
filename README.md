@@ -58,7 +58,13 @@ Será preciso configurar las siguientes variables de entorno cuando se instale e
 
 |Variable|Descripción|Valor por defecto|
 |---|---|---|
-|`APP_TRELLIS_ENABLED`|Flag que indica si se debe persistir en Trellis|true|
+|`APP_TRELLIS_ENABLED`|Flag que indica si se debe persistir en Trellis. Valores admisibles `true` y `false`|true|
 |`APP_TRELLIS_ENDPOINT`|URL del servicio de Trellis|http://localhost:80|
+|`APP_WIKIBASE_ENABLED`|Flag que indica si se debe persistir en Wikibase. Valores admisibles `true` y `false`|false|
+|`APP_WIKIBASE_API_URL`|URL del servicio del API de Wikibase|http://localhost:8181/api.php|
+|`APP_WIKIBASE_API_USERNAME`|Usuario en Wikibase|WikibaseAdmin|
+|`APP_WIKIBASE_API_PASSWORD`|Contraseña para usuario en Wikibase|WikibaseDockerAdminPass|
+|`APP_WIKIBASE_API_QUERY_DEFAULT_LANGUAGE`|Lenguaje por defecto en Wikibase|es|
+|`APP_WIKIBASE_API_SITE_URI`|URL del servicio de entidad en Wikibase|http://localhost:8181/entity/|
 
 
