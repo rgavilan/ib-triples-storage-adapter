@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
+import org.wikidata.wdtk.datamodel.helpers.PropertyDocumentBuilder;
 import org.wikidata.wdtk.datamodel.helpers.StatementBuilder;
 import org.wikidata.wdtk.datamodel.implementation.PropertyIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
@@ -51,6 +52,21 @@ public class CreateItemTest {
 		findSomeStringProperties(connection);
 
 		final ItemIdValue noid = ItemIdValue.NULL; // used when creating new items
+		final PropertyIdValue noidP = PropertyIdValue.NULL;
+		
+		// PropertyDocumentBuilder.forPropertyIdAndDatatype(noidP, "propertytest");
+		
+		/*
+		PropertyDocument propertyDocument2 = PropertyDocumentBuilder.forPropertyIdAndDatatype(PropertyIdValue.NULL, DatatypeIdValue.DT_STRING).build();
+        PropertyDocument result;
+        try {
+            result = wbde.createPropertyDocument(propertyDocument2, "Summary prueba", null);
+        } catch (IOException | MediaWikiApiErrorException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        */
+		
 		
 		// PropertyIdValue property107 = new PropertyIdValueImpl("P1", siteIri);
 		// PropertyIdValue property108 = new PropertyIdValueImpl("P2", siteIri);
