@@ -103,6 +103,9 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	    if(IsModelType(statement)) {
             
             PropertyDocument propertyDocument = getOrCreateProperty(statement.getPredicate(), DatatypeIdValue.DT_STRING);
+            if(propertyDocument == null) {
+                logger.info("No se encontró la propiedad {}", statement.getPredicate());
+            }
             String propertyValue =  statement.getResource().getURI();
             return StatementBuilder.forSubjectAndProperty(itemId, propertyDocument.getEntityId())
                     .withValue(Datamodel.makeStringValue(propertyValue))
@@ -112,9 +115,14 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
         if(IsReferenceToAnotherEntity(statement)) {
             
             String resource = statement.getResource().getURI();
-            var item = template.searchFirst(new MonolingualTextValueImpl(resource,"es"));
-            
+            var item = template.searchItem(new MonolingualTextValueImpl(resource,"es"));
+            if(item == null) {
+                logger.info("No se encontró el recurso {}", resource);
+            }
             PropertyDocument propertyDocument = getOrCreateProperty(statement.getPredicate(), DatatypeIdValue.DT_ITEM);
+            if(propertyDocument == null) {
+                logger.info("No se encontró la propiedad {}", statement.getPredicate());
+            }
             Reference reference = ReferenceBuilder.newInstance().withPropertyValue(propertyDocument.getEntityId(), item.getEntityId()).build();
             return StatementBuilder.forSubjectAndProperty(itemId, propertyDocument.getEntityId())
                     .withReference(reference)
@@ -124,12 +132,18 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
         else if(IsTextProperty(statement)) {
             
             PropertyDocument propertyDocument = getOrCreateProperty(statement.getPredicate(), DatatypeIdValue.DT_STRING);
+            if(propertyDocument == null) {
+                logger.info("No se encontró la propiedad {}", statement.getPredicate());
+            }
             String propertyValue = statement.getString();
             return StatementBuilder.forSubjectAndProperty(itemId, propertyDocument.getEntityId())
                     .withValue(Datamodel.makeStringValue(propertyValue))
                     .build();
         }
         
+         
+        logger.info("No se pudo interpretar el statement");
+       
         return null;
 	}
 	

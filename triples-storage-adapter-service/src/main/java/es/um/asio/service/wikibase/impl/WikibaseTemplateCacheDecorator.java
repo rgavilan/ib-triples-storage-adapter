@@ -3,6 +3,8 @@ package es.um.asio.service.wikibase.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import es.um.asio.service.wikibase.WikibaseOperations;
 @Primary
 public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
 
+    private final Logger logger = LoggerFactory.getLogger(WikibaseTemplateCacheDecorator.class);
+
     /** 
      * The wikibase operations.
      */
@@ -35,7 +39,7 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
     /**
      *  The entities searched map.
     */
-    Map<String, EntityDocument> entitiesMap = new HashMap<String, EntityDocument>();
+    Map<String, ItemDocument> itemsMap = new HashMap<String, ItemDocument>();
     
     /**
      * {@inheritDoc}
@@ -49,18 +53,21 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
      * {@inheritDoc}
      */
     @Override
-    public EntityDocument searchFirst(MonolingualTextValue searchText) throws TripleStoreException {
-        String entityKey = searchText.getText();
+    public ItemDocument searchItem(MonolingualTextValue textValue) throws TripleStoreException {
+        String entityKey = textValue.getText();
         
-        EntityDocument entityDocumentCached = entitiesMap.get(entityKey);
-        if(entityDocumentCached != null) { 
-            return entityDocumentCached;
+        ItemDocument itemDocumentCached = itemsMap.get(entityKey);
+        if(itemDocumentCached != null) { 
+            logger.info("EntityDocument recuperado de cache {}",entityKey);
+            return itemDocumentCached;
         }
         
-        var entityDocument = wikibaseOperations.searchFirst(searchText);
-        entitiesMap.put(entityKey, entityDocumentCached);
-
-        return entityDocument;
+        var itemDocument = wikibaseOperations.searchItem(textValue);
+        itemsMap.put(entityKey, itemDocumentCached);
+        
+        logger.info("EntityDocument cacheado {}",entityKey);
+        
+        return itemDocument;
     }
 
     /**
@@ -72,11 +79,14 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
         
         PropertyDocument propertyDocumentCached = propertiesMap.get(propertyKey);
         if(propertyDocumentCached != null) { 
+            logger.info("PropertyDocument recuperado de cache {}",propertyKey);
             return propertyDocumentCached;
         }
         
         var propertyDocument = wikibaseOperations.getOrCreateProperty(label, description, dataTypeIdValue);
         propertiesMap.put(propertyKey, propertyDocument);
+
+        logger.info("PropertyDocument cacheado {}",propertyKey);
 
         return propertyDocument;
     }

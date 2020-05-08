@@ -1,16 +1,9 @@
 package es.um.asio.service.wikibase;
 
-import java.util.List;
-import java.util.Map;
-
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
 import es.um.asio.service.exception.TripleStoreException;
 
 public interface WikibaseOperations {
@@ -28,13 +21,13 @@ public interface WikibaseOperations {
    
     
     /**
-     * Search the first document containing the {@linkplain MonolingualTextValue}.
+     * Search the first item document containing the {@linkplain MonolingualTextValue}.
      *
-     * @param searchText the search text
+     * @param textValue the text value
      * @return the entity document
      * @throws TripleStoreException the triple store exception
      */
-    EntityDocument searchFirst(MonolingualTextValue searchText) throws TripleStoreException;
+    ItemDocument searchItem(MonolingualTextValue textValue) throws TripleStoreException;
 
     /**
      * Gets the or create property.

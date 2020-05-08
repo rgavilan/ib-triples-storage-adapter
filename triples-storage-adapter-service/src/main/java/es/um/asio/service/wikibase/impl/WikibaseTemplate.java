@@ -68,9 +68,29 @@ public class WikibaseTemplate implements WikibaseOperations {
      * {@inheritDoc}
      */
     @Override
-    public EntityDocument searchFirst(final MonolingualTextValue searchText) throws TripleStoreException {        
-        final List<EntityDocument> documents = this.search(searchText.getText(), searchText.getLanguageCode(), 1);
-        return documents.isEmpty() ? null : documents.get(0);
+    public ItemDocument searchItem(final MonolingualTextValue textValue) throws TripleStoreException {       
+        ItemDocument item = null;
+        int propertyNumber = 1;
+        try {
+            while (item == null) {
+                final ArrayList<String> fetchProperties = new ArrayList<>();
+                for (int i = propertyNumber; i < (propertyNumber + 100); i++) {
+                    fetchProperties.add("Q" + i);
+                }
+                propertyNumber += 100;
+                final Map<String, EntityDocument> results = dataFetcher.getEntityDocuments(fetchProperties);
+                for (final EntityDocument ed : results.values()) {
+                    final ItemDocument pd = (ItemDocument) ed;
+                    if (pd.getLabels().containsValue(textValue)) {
+                        return pd;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new TripleStoreException(e);
+        }
+      
+        return item;
     }
 
  
@@ -96,7 +116,7 @@ public class WikibaseTemplate implements WikibaseOperations {
         try {
             newProperty = this.dataEditor.createPropertyDocument(propertyDocument, "Create new property", Collections.emptyList());
         } catch (IOException | MediaWikiApiErrorException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         
         //2. search the property 
@@ -177,40 +197,6 @@ public class WikibaseTemplate implements WikibaseOperations {
         }
         return property;
     }
-    
-    /**
-     * Search documents containing the search string.
-     *
-     * @param searchString
-     *            Search string.
-     * @param language
-     *            Language. If {@code null}, default language is used.
-     * @param maxElements
-     *            Max number of elements. If lower or equal than 0, returns all elements.
-     * @return List of documents
-     * @throws TripleStoreException
-     *             in case of error.
-     */
-    private List<EntityDocument> search(final String searchString, final String language, final int maxElements)
-            throws TripleStoreException {
-        final List<EntityDocument> documents = new ArrayList<>();
-        int element = 0;
+   
 
-        try {
-            final List<WbSearchEntitiesResult> results = this.dataFetcher.searchEntities(searchString,
-                    StringUtils.isNotBlank(language) ? language : this.properties.getQuery().getDefaultLanguage());
-            for (final WbSearchEntitiesResult result : results) {
-
-                documents.add(this.getById(result.getEntityId()));
-
-                if ((maxElements > 0) && (++element >= maxElements)) {
-                    break;
-                }
-            }
-        } catch (final MediaWikiApiErrorException e) {
-            throw new TripleStoreException("Error searching documents", e);
-        }
-
-        return documents;
-    }
 }
