@@ -86,6 +86,8 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
         }
      	
     	template.insert(itemDocumentBuilder.build());
+    	
+        logger.info("GRAYLOG-TS Creado recurso en wikibase de tipo: " + message.getClassName());
 	}
 
 	/**
