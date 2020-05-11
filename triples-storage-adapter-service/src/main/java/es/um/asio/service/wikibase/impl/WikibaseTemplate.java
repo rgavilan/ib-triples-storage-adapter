@@ -3,7 +3,6 @@ package es.um.asio.service.wikibase.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,12 +14,10 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.wikibaseapi.WbSearchEntitiesResult;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import es.um.asio.service.config.properties.WikibaseProperties;
 import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.wikibase.WikibaseConnectionManager;
 import es.um.asio.service.wikibase.WikibaseOperations;
@@ -48,12 +45,6 @@ public class WikibaseTemplate implements WikibaseOperations {
      */
     @Autowired
     private WikibaseDataEditor dataEditor;
-
-    /**
-     * Wikibase related configuration properties.
-     */
-    @Autowired
-    private WikibaseProperties properties;
 
     /**
      * {@inheritDoc}
@@ -101,7 +92,7 @@ public class WikibaseTemplate implements WikibaseOperations {
     public PropertyDocument getOrCreateProperty(MonolingualTextValue label, MonolingualTextValue description, String dataTypeIdValue)
             throws TripleStoreException {        
         //Properties throw an exception when created. Therefore, first we create it
-        //and then we search for it based on label and description
+        //and then we search for it based on label
         //Related with https://github.com/Wikidata/Wikidata-Toolkit/issues/419
         
         PropertyDocument propertyDocument = PropertyDocumentBuilder

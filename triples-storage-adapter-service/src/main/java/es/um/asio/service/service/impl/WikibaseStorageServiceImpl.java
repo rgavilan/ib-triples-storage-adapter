@@ -13,7 +13,6 @@ import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
 import org.wikidata.wdtk.datamodel.helpers.ReferenceBuilder;
 import org.wikidata.wdtk.datamodel.helpers.StatementBuilder;
-import org.wikidata.wdtk.datamodel.implementation.MonolingualTextValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
@@ -24,6 +23,7 @@ import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.service.TriplesStorageService;
 import es.um.asio.service.util.TrellisUtils;
+import es.um.asio.service.util.WikibaseUtils;
 import es.um.asio.service.wikibase.WikibaseOperations;
 
 @ConditionalOnProperty(prefix = "app.wikibase", name = "enabled", havingValue = "true", matchIfMissing = true)
@@ -32,8 +32,17 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 
 	private final Logger logger = LoggerFactory.getLogger(WikibaseStorageServiceImpl.class);
 	
+    /** 
+     * The trellis utils.
+    */
     @Autowired
     private TrellisUtils trellisUtils;
+    
+    /** 
+     * The wikibase utils. 
+    */
+    @Autowired
+    private WikibaseUtils wikibaseUtils;
     
     /**
      * Wikibase template
@@ -76,7 +85,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 
 		ItemIdValue itemId = ItemIdValue.NULL; 
         ItemDocumentBuilder itemDocumentBuilder = ItemDocumentBuilder.forItemId(itemId)
-                .withLabel(new MonolingualTextValueImpl(statements.get(0).getSubject().getURI(), "es"));
+                .withLabel(wikibaseUtils.createMonolingualTextValue(statements.get(0).getSubject().getURI()));
         
         for (Statement statement : statements) {
             var wikiStatement = convertToWikiStatement(statement, itemId);
@@ -104,7 +113,8 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
             
             PropertyDocument propertyDocument = getOrCreateProperty(statement.getPredicate(), DatatypeIdValue.DT_STRING);
             if(propertyDocument == null) {
-                logger.info("No se encontró la propiedad {}", statement.getPredicate());
+                logger.warn("Property not found {}", statement.getPredicate());
+                return null;
             }
             String propertyValue =  statement.getResource().getURI();
             return StatementBuilder.forSubjectAndProperty(itemId, propertyDocument.getEntityId())
@@ -115,13 +125,15 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
         if(IsReferenceToAnotherEntity(statement)) {
             
             String resource = statement.getResource().getURI();
-            var item = template.searchItem(new MonolingualTextValueImpl(resource,"es"));
+            var item = template.searchItem(wikibaseUtils.createMonolingualTextValue(resource));
             if(item == null) {
-                logger.info("No se encontró el recurso {}", resource);
+                logger.warn("Resource not found {}", resource);
+                return null;
             }
             PropertyDocument propertyDocument = getOrCreateProperty(statement.getPredicate(), DatatypeIdValue.DT_ITEM);
             if(propertyDocument == null) {
-                logger.info("No se encontró la propiedad {}", statement.getPredicate());
+                logger.warn("Property not found {}", statement.getPredicate());
+                return null;
             }
             Reference reference = ReferenceBuilder.newInstance().withPropertyValue(propertyDocument.getEntityId(), item.getEntityId()).build();
             return StatementBuilder.forSubjectAndProperty(itemId, propertyDocument.getEntityId())
@@ -133,7 +145,8 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
             
             PropertyDocument propertyDocument = getOrCreateProperty(statement.getPredicate(), DatatypeIdValue.DT_STRING);
             if(propertyDocument == null) {
-                logger.info("No se encontró la propiedad {}", statement.getPredicate());
+                logger.warn("Property not found {}", statement.getPredicate());
+                return null;
             }
             String propertyValue = statement.getString();
             return StatementBuilder.forSubjectAndProperty(itemId, propertyDocument.getEntityId())
@@ -142,7 +155,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
         }
         
          
-        logger.info("No se pudo interpretar el statement");
+        logger.warn("The statement could not be translated to wikibase");
        
         return null;
 	}
@@ -185,10 +198,10 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	 * @throws TripleStoreException the triple store exception
 	 */
 	private PropertyDocument getOrCreateProperty(Property property, String dataTypeIdValue) throws TripleStoreException {
-        var label = new MonolingualTextValueImpl(property.toString(),"es");
-        var description = new MonolingualTextValueImpl(property.getLocalName(),"es");
+	    var label = wikibaseUtils.createMonolingualTextValue(property.toString());
+        var description = wikibaseUtils.createMonolingualTextValue(property.getLocalName());
        
-        return template.getOrCreateProperty(label,description,dataTypeIdValue);
+        return template.getOrCreateProperty(label, description, dataTypeIdValue);
 	}
 
 }

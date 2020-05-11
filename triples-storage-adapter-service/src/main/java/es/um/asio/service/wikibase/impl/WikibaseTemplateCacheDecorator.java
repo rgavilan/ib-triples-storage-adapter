@@ -3,8 +3,6 @@ package es.um.asio.service.wikibase.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -22,8 +20,6 @@ import es.um.asio.service.wikibase.WikibaseOperations;
 @Service
 @Primary
 public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
-
-    private final Logger logger = LoggerFactory.getLogger(WikibaseTemplateCacheDecorator.class);
 
     /** 
      * The wikibase operations.
@@ -58,14 +54,11 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
         
         ItemDocument itemDocumentCached = itemsMap.get(entityKey);
         if(itemDocumentCached != null) { 
-            logger.info("EntityDocument recuperado de cache {}",entityKey);
             return itemDocumentCached;
         }
         
         var itemDocument = wikibaseOperations.searchItem(textValue);
-        itemsMap.put(entityKey, itemDocumentCached);
-        
-        logger.info("EntityDocument cacheado {}",entityKey);
+        itemsMap.put(entityKey, itemDocumentCached);        
         
         return itemDocument;
     }
@@ -79,21 +72,17 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
         
         PropertyDocument propertyDocumentCached = propertiesMap.get(propertyKey);
         if(propertyDocumentCached != null) { 
-            logger.info("PropertyDocument recuperado de cache {}",propertyKey);
             return propertyDocumentCached;
         }
         
         var propertyDocument = wikibaseOperations.getOrCreateProperty(label, description, dataTypeIdValue);
         propertiesMap.put(propertyKey, propertyDocument);
 
-        logger.info("PropertyDocument cacheado {}",propertyKey);
-
         return propertyDocument;
     }
 
     @Override
     public ItemDocument insert(ItemDocument itemDocument) throws TripleStoreException {
-        // TODO Auto-generated method stub
         return wikibaseOperations.insert(itemDocument);
     }
 
