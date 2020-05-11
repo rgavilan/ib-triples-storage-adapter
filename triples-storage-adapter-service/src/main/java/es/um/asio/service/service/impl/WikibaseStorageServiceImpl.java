@@ -1,6 +1,8 @@
 package es.um.asio.service.service.impl;
 
 import java.io.IOException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Statement;
@@ -11,12 +13,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
-import org.wikidata.wdtk.datamodel.helpers.ReferenceBuilder;
 import org.wikidata.wdtk.datamodel.helpers.StatementBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
-import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import es.um.asio.abstractions.domain.ManagementBusEvent;
@@ -147,7 +147,11 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
                 logger.warn("Property not found {}", statement.getPredicate());
                 return null;
             }
-            String propertyValue = statement.getString();
+            
+            String propertyValue = statement.getString().trim();
+            if(StringUtils.isEmpty(propertyValue)) {
+                propertyValue = "."; //Property must contain at least one character
+            }
             return StatementBuilder.forSubjectAndProperty(itemId, propertyDocument.getEntityId())
                     .withValue(Datamodel.makeStringValue(propertyValue))
                     .build();
