@@ -12,6 +12,7 @@ Para iniciar el entorno de desarrollo se necesita cumplir los siguientes requisi
 ** m2e-apt
 ** Lombok
 * Docker
+* Pentaho
 
 
 ### Instalar Lombok
@@ -27,6 +28,12 @@ En caso que de problemas a la hora de generar las clases de Mapstruct, es precis
 ```
 -javaagent:C:\desarrollo\java\install\eclipse-jee-2018-12-R-win32-x86_64\lombok-patched-1.18.6.jar
 ```
+
+
+### Instalar Pentaho
+
+Se debe descargar de  [https://sourceforge.net/projects/pentaho/files/Pentaho%209.0/server/](https://sourceforge.net/projects/pentaho/files/Pentaho%209.0/server/) la versión pdi-ce-9.0.0.0-423.zip
+
 
 ## Metodología de desarrollo
 
