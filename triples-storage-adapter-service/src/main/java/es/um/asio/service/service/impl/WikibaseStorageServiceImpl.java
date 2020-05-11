@@ -135,9 +135,8 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
                 logger.warn("Property not found {}", statement.getPredicate());
                 return null;
             }
-            Reference reference = ReferenceBuilder.newInstance().withPropertyValue(propertyDocument.getEntityId(), item.getEntityId()).build();
             return StatementBuilder.forSubjectAndProperty(itemId, propertyDocument.getEntityId())
-                    .withReference(reference)
+                    .withValue(item.getEntityId())
                     .build();
         }
         
