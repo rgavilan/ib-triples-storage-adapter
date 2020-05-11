@@ -19,5 +19,5 @@ public class QueryProperties {
      * Default query language
      */
     @NotNull
-    private String defaultLanguage = "en";
+    private String defaultLanguage = "es";
 }
