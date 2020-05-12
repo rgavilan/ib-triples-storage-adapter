@@ -23,7 +23,7 @@ import es.um.asio.service.util.TrellisUtils;
 import es.um.asio.service.util.WikibaseUtils;
 import es.um.asio.service.wikibase.WikibaseOperations;
 
-@ConditionalOnProperty(prefix = "app.wikibase", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "app.wikibase", name = "enabled", havingValue = "true", matchIfMissing = false)
 @Service
 public class WikibaseStorageServiceImpl implements TriplesStorageService {
 

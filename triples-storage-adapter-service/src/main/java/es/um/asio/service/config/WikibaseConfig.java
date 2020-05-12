@@ -1,8 +1,10 @@
 package es.um.asio.service.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -17,6 +19,7 @@ import es.um.asio.service.config.properties.WikibaseProperties;
  * Wikibase related configuration
  */
 @Configuration
+@ConditionalOnProperty(prefix = "app.wikibase", name = "enabled", havingValue = "true", matchIfMissing = false)
 @EnableConfigurationProperties(WikibaseProperties.class)
 public class WikibaseConfig {
 

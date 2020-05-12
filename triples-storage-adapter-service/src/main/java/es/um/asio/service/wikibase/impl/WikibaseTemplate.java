@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.wikidata.wdtk.datamodel.helpers.PropertyDocumentBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
@@ -25,6 +26,7 @@ import es.um.asio.service.wikibase.WikibaseOperations;
 /**
  * Wikibase template
  */
+@ConditionalOnProperty(prefix = "app.wikibase", name = "enabled", havingValue = "true", matchIfMissing = false)
 @Service(value = "WikibaseTemplate")
 public class WikibaseTemplate implements WikibaseOperations {
     
