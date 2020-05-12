@@ -15,6 +15,10 @@ app:
   trellis:
     enabled: true
     endpoint: http://localhost:80
+    authentication:
+      enabled: false
+      username: admin
+      password: admin
   # Wikibase
   wikibase:
     enabled: false
