@@ -1,8 +1,6 @@
 package es.um.asio.service.service.impl;
 
 import java.io.IOException;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Statement;
@@ -18,7 +16,6 @@ import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
-
 import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.service.TriplesStorageService;
@@ -148,10 +145,8 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
                 return null;
             }
             
-            String propertyValue = statement.getString().trim();
-            if(StringUtils.isEmpty(propertyValue)) {
-                propertyValue = "."; //Property must contain at least one character
-            }
+            String propertyValue = this.wikibaseUtils.sanitizePropertyValue(statement.getString());
+            
             return StatementBuilder.forSubjectAndProperty(itemId, propertyDocument.getEntityId())
                     .withValue(Datamodel.makeStringValue(propertyValue))
                     .build();
