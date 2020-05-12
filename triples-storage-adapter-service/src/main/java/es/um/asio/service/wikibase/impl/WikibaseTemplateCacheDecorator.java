@@ -58,7 +58,9 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
         }
         
         var itemDocument = wikibaseOperations.searchItem(textValue);
-        itemsMap.put(entityKey, itemDocumentCached);        
+        if(itemDocument != null) {
+            itemsMap.put(entityKey, itemDocumentCached);        
+        }
         
         return itemDocument;
     }
@@ -76,7 +78,9 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
         }
         
         var propertyDocument = wikibaseOperations.getOrCreateProperty(label, description, dataTypeIdValue);
-        propertiesMap.put(propertyKey, propertyDocument);
+        if(propertyDocument != null) {
+            propertiesMap.put(propertyKey, propertyDocument);
+        }
 
         return propertyDocument;
     }
