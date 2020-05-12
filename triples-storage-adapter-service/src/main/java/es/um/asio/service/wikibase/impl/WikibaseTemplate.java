@@ -27,7 +27,7 @@ import es.um.asio.service.wikibase.WikibaseOperations;
  */
 @Service(value = "WikibaseTemplate")
 public class WikibaseTemplate implements WikibaseOperations {
-
+    
     /**
      * Wikibase connection manager.
      */
@@ -61,15 +61,16 @@ public class WikibaseTemplate implements WikibaseOperations {
     @Override
     public ItemDocument searchItem(final MonolingualTextValue textValue) throws TripleStoreException {       
         ItemDocument item = null;
-        int propertyNumber = 1;
+        int itemNumber = 1;
+        Map<String, EntityDocument> results;
         try {
-            while (item == null) {
-                final ArrayList<String> fetchProperties = new ArrayList<>();
-                for (int i = propertyNumber; i < (propertyNumber + 100); i++) {
-                    fetchProperties.add("Q" + i);
+            do {
+                final ArrayList<String> fetchItems = new ArrayList<>();
+                for (int i = itemNumber; i < (itemNumber + 1000); i++) {
+                    fetchItems.add("Q" + i);
                 }
-                propertyNumber += 100;
-                final Map<String, EntityDocument> results = dataFetcher.getEntityDocuments(fetchProperties);
+                itemNumber += 1000;
+                results = dataFetcher.getEntityDocuments(fetchItems);
                 for (final EntityDocument ed : results.values()) {
                     final ItemDocument pd = (ItemDocument) ed;
                     if (pd.getLabels().containsValue(textValue)) {
@@ -77,6 +78,8 @@ public class WikibaseTemplate implements WikibaseOperations {
                     }
                 }
             }
+            while(results!=null && !results.isEmpty());
+            
         } catch (Exception e) {
             throw new TripleStoreException(e);
         }
@@ -172,13 +175,14 @@ public class WikibaseTemplate implements WikibaseOperations {
     private PropertyDocument searchProperty(MonolingualTextValue label, String dataTypeIdValue) throws MediaWikiApiErrorException, IOException {       
         PropertyDocument property = null;
         int propertyNumber = 1;
-        while (property == null) {
+        Map<String, EntityDocument> results = null;
+        do {
             final ArrayList<String> fetchProperties = new ArrayList<>();
-            for (int i = propertyNumber; i < (propertyNumber + 100); i++) {
+            for (int i = propertyNumber; i < (propertyNumber + 1000); i++) {
                 fetchProperties.add("P" + i);
             }
-            propertyNumber += 100;
-            final Map<String, EntityDocument> results = dataFetcher.getEntityDocuments(fetchProperties);
+            propertyNumber += 1000;
+            results = dataFetcher.getEntityDocuments(fetchProperties);
             for (final EntityDocument ed : results.values()) {
                 final PropertyDocument pd = (PropertyDocument) ed;
                 if (dataTypeIdValue.equals(pd.getDatatype().getIri()) && pd.getLabels().containsValue(label)) {                    
@@ -186,6 +190,8 @@ public class WikibaseTemplate implements WikibaseOperations {
                 }
             }
         }
+        while(results!=null && !results.isEmpty());
+        
         return property;
     }
    
