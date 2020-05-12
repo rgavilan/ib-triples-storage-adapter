@@ -2,6 +2,7 @@ package es.um.asio.service.wikibase;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
@@ -12,6 +13,7 @@ import lombok.Getter;
 /**
  * Wikibase connection manager.
  */
+@ConditionalOnProperty(prefix = "app.wikibase", name = "enabled", havingValue = "true", matchIfMissing = false)
 @Component
 public class WikibaseConnectionManager {
     
