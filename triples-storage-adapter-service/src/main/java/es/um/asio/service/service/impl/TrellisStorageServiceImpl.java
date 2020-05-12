@@ -1,7 +1,5 @@
 package es.um.asio.service.service.impl;
 
-import java.util.Base64;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.jena.rdf.model.Model;
@@ -18,7 +16,6 @@ import org.trellisldp.api.RuntimeTrellisException;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
 
 import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.service.service.TriplesStorageService;
@@ -43,15 +40,6 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 
 	@Value("${app.trellis.endpoint}")
 	private String trellisUrlEndPoint;
-	
-	@Value("${app.trellis.authentication.enabled}")
-    private Boolean authenticationEnabled;
-	
-    @Value("${app.trellis.authentication.username}")
-    private String username;
-   
-    @Value("${app.trellis.authentication.password}")
-    private String password;
 
 	/**
 	 * Process.
@@ -83,7 +71,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	 * @return the model
 	 */
 	public Model get(String resourceUri) {
-		Model model = createRequestSpecification()
+		Model model = RestAssured.given()
 				.header("Accept", MediaTypes.TEXT_TURTLE)
 				.expect().statusCode(HttpStatus.SC_OK)
 				.when().get(resourceUri)
@@ -149,7 +137,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 		String urlContainer =  trellisUrlEndPoint + "/" + message.getClassName();
 		Model model;
 		try {
-			model = createRequestSpecification()
+			model = RestAssured.given()
 					.header("Accept", MediaTypes.TEXT_TURTLE)
 					.expect()
 					.when().get(urlContainer)
@@ -182,7 +170,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 		
 		Response postResponse;
 		try {
-			postResponse = createRequestSpecification()
+			postResponse = RestAssured.given()
 					.contentType(MediaTypes.TEXT_TURTLE)
 					.header("slug", message.getClassName())					
 					.header("link", "<http://www.w3.org/ns/ldp#BasicContainer>; rel=\"type\"")
@@ -209,7 +197,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 		Model model = trellisUtils.toObject(message.getModel());
 		String urlContainer =  trellisUrlEndPoint + "/" + message.getClassName();
 		
-		Response postResponse = createRequestSpecification()
+		Response postResponse = RestAssured.given()
 				.contentType(MediaTypes.TEXT_TURTLE)
 				.header("slug", message.getIdModel())
 				.body(model, new RdfObjectMapper()).post(urlContainer);
@@ -234,7 +222,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
         String resourceID = trellisUtils.toResourceId(message.getIdModel());
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
         
-        Response deleteResponse = createRequestSpecification().delete(urlContainer);
+        Response deleteResponse = RestAssured.given().delete(urlContainer);
        
         if (deleteResponse.getStatusCode() != HttpStatus.SC_OK && deleteResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
             logger.error("Error deleting the object: " + message.getModel());
@@ -251,7 +239,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
         
         Model model = trellisUtils.toObject(message.getModel());        
-        Response postResponse = createRequestSpecification()
+        Response postResponse = RestAssured.given()
                 .contentType(MediaTypes.TEXT_TURTLE)
                 .body(model, new RdfObjectMapper()).put(urlContainer);
         
@@ -264,19 +252,5 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
             logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: " + message.getClassName());
         }
     }    
-    
-    
-    /**
-     * Creates the request specification and adds authentication if is required.
-     *
-     * @return the request specification
-     */
-    private RequestSpecification createRequestSpecification() {
-        RequestSpecification requestSpecification = RestAssured.given();
-        if(authenticationEnabled) {
-            requestSpecification.header("Authorization", "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes()));
-        }
-        return requestSpecification;
-    }
   
 }
