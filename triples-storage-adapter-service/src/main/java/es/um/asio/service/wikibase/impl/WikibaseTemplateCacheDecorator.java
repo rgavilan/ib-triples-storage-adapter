@@ -49,21 +49,42 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
      * {@inheritDoc}
      */
     @Override
-    public ItemDocument searchItem(MonolingualTextValue textValue) throws TripleStoreException {
-        String entityKey = textValue.getText();
+    public ItemDocument getItem(MonolingualTextValue label) throws TripleStoreException {
+        String entityKey = label.getText();
         
         ItemDocument itemDocumentCached = itemsMap.get(entityKey);
         if(itemDocumentCached != null) { 
             return itemDocumentCached;
         }
         
-        var itemDocument = wikibaseOperations.searchItem(textValue);
+        var itemDocument = wikibaseOperations.getItem(label);
         if(itemDocument != null) {
             itemsMap.put(entityKey, itemDocumentCached);        
         }
         
         return itemDocument;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ItemDocument getOrCreateItem(MonolingualTextValue label) throws TripleStoreException {
+        String entityKey = label.getText();
+        
+        ItemDocument itemDocumentCached = itemsMap.get(entityKey);
+        if(itemDocumentCached != null) { 
+            return itemDocumentCached;
+        }
+        
+        var itemDocument = wikibaseOperations.getOrCreateItem(label);
+        if(itemDocument != null) {
+            itemsMap.put(entityKey, itemDocumentCached);        
+        }
+        
+        return itemDocument;
+    }
+
 
     /**
      * {@inheritDoc}
@@ -85,6 +106,9 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
         return propertyDocument;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ItemDocument insert(ItemDocument itemDocument) throws TripleStoreException {
         return wikibaseOperations.insert(itemDocument);

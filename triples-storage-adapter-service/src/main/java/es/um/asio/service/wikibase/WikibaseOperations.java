@@ -21,16 +21,27 @@ public interface WikibaseOperations {
    
     
     /**
-     * Search the first item document containing the {@linkplain MonolingualTextValue}.
+     * Get the first item document containing the {@linkplain MonolingualTextValue}.
      *
      * @param textValue the text value
      * @return the entity document
      * @throws TripleStoreException the triple store exception
      */
-    ItemDocument searchItem(MonolingualTextValue textValue) throws TripleStoreException;
-
+    ItemDocument getItem(MonolingualTextValue label) throws TripleStoreException;
+    
+    
     /**
-     * Gets the or create property.
+     * Get or create an item document containing the {@linkplain MonolingualTextValue}.
+     *
+     * @param textValue the text value
+     * @return the entity document
+     * @throws TripleStoreException the triple store exception
+     */
+    ItemDocument getOrCreateItem(MonolingualTextValue label) throws TripleStoreException;
+    
+    
+    /**
+     * Gets or create property.
      *
      * @param label the label
      * @param description the description

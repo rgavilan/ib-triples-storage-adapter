@@ -13,6 +13,7 @@ import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
 import org.wikidata.wdtk.datamodel.helpers.StatementBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -107,22 +108,27 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
     private org.wikidata.wdtk.datamodel.interfaces.Statement convertToWikiStatement(Statement statement, ItemIdValue itemId) throws TripleStoreException {
 	    
 	    if(IsModelType(statement)) {
-            
-            PropertyDocument propertyDocument = getOrCreateProperty(statement.getPredicate(), DatatypeIdValue.DT_STRING);
+	        
+	        String resource = statement.getResource().getURI();
+            ItemDocument item = template.getOrCreateItem(wikibaseUtils.createMonolingualTextValue(resource));
+            if(item == null) {
+                logger.warn("Resource not found {}", resource);
+                return null;
+            }
+            PropertyDocument propertyDocument = getOrCreateProperty(statement.getPredicate(), DatatypeIdValue.DT_ITEM);
             if(propertyDocument == null) {
                 logger.warn("Property not found {}", statement.getPredicate());
                 return null;
             }
-            String propertyValue =  statement.getResource().getURI();
             return StatementBuilder.forSubjectAndProperty(itemId, propertyDocument.getEntityId())
-                    .withValue(Datamodel.makeStringValue(propertyValue))
+                    .withValue(item.getEntityId())
                     .build();
         }
         
         if(IsReferenceToAnotherEntity(statement)) {
             
             String resource = statement.getResource().getURI();
-            var item = template.searchItem(wikibaseUtils.createMonolingualTextValue(resource));
+            ItemDocument item = template.getItem(wikibaseUtils.createMonolingualTextValue(resource));
             if(item == null) {
                 logger.warn("Resource not found {}", resource);
                 return null;

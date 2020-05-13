@@ -9,9 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
 import org.wikidata.wdtk.datamodel.helpers.PropertyDocumentBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -61,7 +63,7 @@ public class WikibaseTemplate implements WikibaseOperations {
      * {@inheritDoc}
      */
     @Override
-    public ItemDocument searchItem(final MonolingualTextValue textValue) throws TripleStoreException {       
+    public ItemDocument getItem(final MonolingualTextValue label) throws TripleStoreException {       
         ItemDocument item = null;
         int itemNumber = 1;
         Map<String, EntityDocument> results;
@@ -75,7 +77,7 @@ public class WikibaseTemplate implements WikibaseOperations {
                 results = dataFetcher.getEntityDocuments(fetchItems);
                 for (final EntityDocument ed : results.values()) {
                     final ItemDocument pd = (ItemDocument) ed;
-                    if (pd.getLabels().containsValue(textValue)) {
+                    if (pd.getLabels().containsValue(label)) {
                         return pd;
                     }
                 }
@@ -86,6 +88,19 @@ public class WikibaseTemplate implements WikibaseOperations {
             throw new TripleStoreException(e);
         }
       
+        return item;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ItemDocument getOrCreateItem(MonolingualTextValue label) throws TripleStoreException {
+        ItemDocument item = this.getItem(label);
+        if(item == null) {
+            item = this.insert(ItemDocumentBuilder.forItemId(ItemIdValue.NULL).withLabel(label).build());
+        }
         return item;
     }
 
@@ -196,6 +211,4 @@ public class WikibaseTemplate implements WikibaseOperations {
         
         return property;
     }
-   
-
 }
