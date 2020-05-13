@@ -188,16 +188,19 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
         return statement.getObject().isLiteral();
     }
 	
+	 
 	/**
-	 * Gets the or create property.
+	 *  Gets the or create property.
 	 *
 	 * @param property the property
-	 * @return the or create propertyme e
+	 * @param dataTypeIdValue the data type id value
+	 * @return the or create property
 	 * @throws TripleStoreException the triple store exception
 	 */
 	private PropertyDocument getOrCreateProperty(Property property, String dataTypeIdValue) throws TripleStoreException {
-	    var label = wikibaseUtils.createMonolingualTextValue(property.toString());
-        var description = wikibaseUtils.createMonolingualTextValue(property.getLocalName());
+	    //We add a "." to the description, because the properties can't have the same value for label and description
+	    var label = wikibaseUtils.createMonolingualTextValue(property.getLocalName());
+        var description = wikibaseUtils.createMonolingualTextValue(property.getLocalName().concat("."));
        
         return template.getOrCreateProperty(label, description, dataTypeIdValue);
 	}
