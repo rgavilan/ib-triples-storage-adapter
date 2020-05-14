@@ -147,7 +147,7 @@ public class WikibaseTemplate implements WikibaseOperations {
     public ItemDocument insert(ItemDocument itemDocument) throws TripleStoreException {
         ItemDocument newItem;
         try {
-            newItem = this.dataEditor.createItemDocument(itemDocument, "Create new item", Collections.emptyList());
+            newItem = this.dataEditor.createItemDocument(itemDocument, "Create new item", Collections.emptyList());          
         } catch (IOException | MediaWikiApiErrorException e) {
             throw new TripleStoreException("Error creating document", e);
         }       
@@ -155,6 +155,20 @@ public class WikibaseTemplate implements WikibaseOperations {
         return newItem;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ItemDocument replace(ItemDocument itemDocument) throws TripleStoreException {
+        ItemDocument replacedItem;
+        try {
+            replacedItem = this.dataEditor.editItemDocument(itemDocument, true, "Replace item", Collections.emptyList());
+         } catch (IOException | MediaWikiApiErrorException e) {
+            throw new TripleStoreException("Error replacing document", e);
+        }       
+        
+        return replacedItem;
+    }
     
     /**
      * Gets the by id.

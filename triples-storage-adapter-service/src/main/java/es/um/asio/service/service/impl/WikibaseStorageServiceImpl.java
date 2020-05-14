@@ -1,6 +1,8 @@
 package es.um.asio.service.service.impl;
 
 import java.io.IOException;
+import java.util.List;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Statement;
@@ -15,6 +17,7 @@ import org.wikidata.wdtk.datamodel.helpers.StatementBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 import es.um.asio.abstractions.domain.ManagementBusEvent;
@@ -78,12 +81,13 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	void save(ManagementBusEvent message) throws TripleStoreException {
 	    logger.info("Saving object in Wikibase : " + message.toString());
 
-		Model model = trellisUtils.toObject(message.getModel());	
-        var statements =  model.listStatements().toList();
-
-		ItemIdValue itemId = ItemIdValue.NULL; 
-        ItemDocumentBuilder itemDocumentBuilder = ItemDocumentBuilder.forItemId(itemId)
-                .withLabel(wikibaseUtils.createMonolingualTextValue(statements.get(0).getSubject().getURI()));
+		Model model = trellisUtils.toObject(message.getModel());
+        List<Statement> statements =  model.listStatements().toList();
+        String modelId = statements.get(0).getSubject().getURI();
+        
+        MonolingualTextValue itemToSaveLabel = wikibaseUtils.createMonolingualTextValue(modelId);
+        ItemIdValue itemToSaveId = this.getItemIdValue(itemToSaveLabel);
+        ItemDocumentBuilder itemDocumentBuilder = ItemDocumentBuilder.forItemId(itemToSaveId).withLabel(itemToSaveLabel);
         
         for (Statement statement : statements) {
             var wikiStatement = convertToWikiStatement(statement, itemId);
@@ -91,12 +95,32 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
                 itemDocumentBuilder.withStatement(wikiStatement);
             }
         }
-     	
-    	template.insert(itemDocumentBuilder.build());
-    	
+     	        
+        ItemDocument itemToSave = itemDocumentBuilder.build();
+        if(itemToSave.getEntityId().equals(ItemIdValue.NULL)) {
+            template.insert(itemToSave);
+        } else {
+            template.replace(itemToSave);            
+        }
+        
         logger.info("GRAYLOG-TS Creado recurso en wikibase de tipo: " + message.getClassName());
 	}
 
+	/**
+	 * Gets the item id value.
+	 *
+	 * @param itemLabel the item label
+	 * @return the item id value
+	 * @throws TripleStoreException the triple store exception
+	 */
+	private ItemIdValue getItemIdValue(MonolingualTextValue itemLabel) throws TripleStoreException {
+	    ItemIdValue itemIdValue = ItemIdValue.NULL; 
+        ItemDocument itemDocument = this.template.getItem(itemLabel);
+        if(itemDocument != null) {
+            itemIdValue = itemDocument.getEntityId();
+        }
+        return itemIdValue;
+	}
 	/**
 	 * Convert {@link org.apache.jena.rdf.model.Statement} to {@link org.wikidata.wdtk.datamodel.interfaces.Statement}
 	 *
@@ -106,29 +130,11 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	 * @throws TripleStoreException the triple store exception
 	 */
     private org.wikidata.wdtk.datamodel.interfaces.Statement convertToWikiStatement(Statement statement, ItemIdValue itemId) throws TripleStoreException {
-	    
-	    if(IsModelType(statement)) {
-	        
-	        String resource = statement.getResource().getURI();
-            ItemDocument item = template.getOrCreateItem(wikibaseUtils.createMonolingualTextValue(resource));
-            if(item == null) {
-                logger.warn("Resource not found {}", resource);
-                return null;
-            }
-            PropertyDocument propertyDocument = getOrCreateProperty(statement.getPredicate(), DatatypeIdValue.DT_ITEM);
-            if(propertyDocument == null) {
-                logger.warn("Property not found {}", statement.getPredicate());
-                return null;
-            }
-            return StatementBuilder.forSubjectAndProperty(itemId, propertyDocument.getEntityId())
-                    .withValue(item.getEntityId())
-                    .build();
-        }
-        
+	   
         if(IsReferenceToAnotherEntity(statement)) {
             
             String resource = statement.getResource().getURI();
-            ItemDocument item = template.getItem(wikibaseUtils.createMonolingualTextValue(resource));
+            ItemDocument item = template.getOrCreateItem(wikibaseUtils.createMonolingualTextValue(resource));
             if(item == null) {
                 logger.warn("Resource not found {}", resource);
                 return null;
@@ -163,17 +169,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
        
         return null;
 	}
-	
-    /**
-     * Checks if statement defines the type of the model.
-     *
-     * @param statement the statement
-     * @return true, if successful
-     */
-    private boolean IsModelType(Statement statement) {
-        return statement.getObject().isResource() && statement.getPredicate().getURI().equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-    }
-    
+ 
     /**
      * Checks if is statement defines a reference to another entity
      *
@@ -181,7 +177,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
      * @return true, if successful
      */
     private boolean IsReferenceToAnotherEntity(Statement statement) {
-        return !IsModelType(statement) && statement.getObject().isResource();
+        return statement.getObject().isResource();
     }
 	
     /**

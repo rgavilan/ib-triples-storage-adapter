@@ -38,6 +38,25 @@ public interface WikibaseOperations {
      * @throws TripleStoreException the triple store exception
      */
     ItemDocument getOrCreateItem(MonolingualTextValue label) throws TripleStoreException;
+
+    /**
+     * Item to insert.
+     *
+     * @param itemDocument the item document
+     * @return the item document
+     * @throws TripleStoreException the triple store exception
+     */
+    ItemDocument insert(ItemDocument itemDocument) throws TripleStoreException;
+    
+   
+    /**
+     * Replace.
+     *
+     * @param itemDocument the item document
+     * @return the item document
+     * @throws TripleStoreException the triple store exception
+     */
+    ItemDocument replace(ItemDocument itemDocument) throws TripleStoreException;
     
     
     /**
@@ -52,14 +71,5 @@ public interface WikibaseOperations {
     PropertyDocument getOrCreateProperty(MonolingualTextValue label, MonolingualTextValue description, String dataTypeIdValue)
             throws TripleStoreException;
 
-
-    /**
-     * Item to insert.
-     *
-     * @param itemDocument the item document
-     * @return the item document
-     * @throws TripleStoreException the triple store exception
-     */
-    ItemDocument insert(ItemDocument itemDocument) throws TripleStoreException;
 
 }

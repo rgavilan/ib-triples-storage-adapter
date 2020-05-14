@@ -113,5 +113,13 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
     public ItemDocument insert(ItemDocument itemDocument) throws TripleStoreException {
         return wikibaseOperations.insert(itemDocument);
     }
+    
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ItemDocument replace(ItemDocument itemDocument) throws TripleStoreException {
+        return wikibaseOperations.replace(itemDocument);
+    }
 }
