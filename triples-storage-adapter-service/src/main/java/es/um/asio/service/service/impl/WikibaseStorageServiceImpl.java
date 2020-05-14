@@ -3,6 +3,7 @@ package es.um.asio.service.service.impl;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Statement;
@@ -84,13 +85,16 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 		Model model = trellisUtils.toObject(message.getModel());
         List<Statement> statements =  model.listStatements().toList();
         String modelId = statements.get(0).getSubject().getURI();
+        if(StringUtils.isEmpty(modelId)) {
+            modelId = message.getIdModel();
+        }
         
         MonolingualTextValue itemToSaveLabel = wikibaseUtils.createMonolingualTextValue(modelId);
         ItemIdValue itemToSaveId = this.getItemIdValue(itemToSaveLabel);
         ItemDocumentBuilder itemDocumentBuilder = ItemDocumentBuilder.forItemId(itemToSaveId).withLabel(itemToSaveLabel);
         
         for (Statement statement : statements) {
-            var wikiStatement = convertToWikiStatement(statement, itemId);
+            var wikiStatement = convertToWikiStatement(statement, itemToSaveId);
             if(wikiStatement != null) {
                 itemDocumentBuilder.withStatement(wikiStatement);
             }
@@ -107,7 +111,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	}
 
 	/**
-	 * Gets the item id value.
+	 * Gets the item id value. Returns {@link ItemIdValue.NULL} if not exists in wikibase
 	 *
 	 * @param itemLabel the item label
 	 * @return the item id value
@@ -134,6 +138,10 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
         if(IsReferenceToAnotherEntity(statement)) {
             
             String resource = statement.getResource().getURI();
+            if(StringUtils.isEmpty(resource)) {
+                logger.warn("Resource is null {}", statement);
+                return null;
+            }
             ItemDocument item = template.getOrCreateItem(wikibaseUtils.createMonolingualTextValue(resource));
             if(item == null) {
                 logger.warn("Resource not found {}", resource);
