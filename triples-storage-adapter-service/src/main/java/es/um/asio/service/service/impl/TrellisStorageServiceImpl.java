@@ -273,7 +273,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
     private RequestSpecification createRequestSpecification() {
         RequestSpecification requestSpecification = RestAssured.given();
         if(authenticationEnabled) {
-            requestSpecification.header("Authorization", "Basic " + Base64.getEncoder().encodeToString((username + ":sdf" + password).getBytes()));
+            requestSpecification.header("Authorization", "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes()));
         }
         return requestSpecification;
     }
