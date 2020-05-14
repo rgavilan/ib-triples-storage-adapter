@@ -22,6 +22,8 @@ import es.um.asio.service.service.TriplesStorageService;
 import es.um.asio.service.util.MediaTypes;
 import es.um.asio.service.util.RdfObjectMapper;
 import es.um.asio.service.util.TrellisUtils;
+import com.jayway.restassured.specification.RequestSpecification;
+import java.util.Base64;
 
 /**
  * Triples service implementation for Trellis.
@@ -40,6 +42,15 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 
 	@Value("${app.trellis.endpoint}")
 	private String trellisUrlEndPoint;
+	
+    @Value("${app.trellis.authentication.enabled}")
+    private Boolean authenticationEnabled;
+    
+    @Value("${app.trellis.authentication.username}")
+    private String username;
+   
+    @Value("${app.trellis.authentication.password}")
+    private String password;
 
 	/**
 	 * Process.
@@ -71,7 +82,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	 * @return the model
 	 */
 	public Model get(String resourceUri) {
-		Model model = RestAssured.given()
+		Model model = createRequestSpecification()
 				.header("Accept", MediaTypes.TEXT_TURTLE)
 				.expect().statusCode(HttpStatus.SC_OK)
 				.when().get(resourceUri)
@@ -137,7 +148,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 		String urlContainer =  trellisUrlEndPoint + "/" + message.getClassName();
 		Model model;
 		try {
-			model = RestAssured.given()
+			model = createRequestSpecification()
 					.header("Accept", MediaTypes.TEXT_TURTLE)
 					.expect()
 					.when().get(urlContainer)
@@ -252,5 +263,21 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
             logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: " + message.getClassName());
         }
     }    
+    
+    
+    /**
+     * Creates the request specification and adds authentication if is required.
+     *
+     * @return the request specification
+     */
+    private RequestSpecification createRequestSpecification() {
+        RequestSpecification requestSpecification = RestAssured.given();
+        if(authenticationEnabled) {
+            requestSpecification.header("Authorization", "Basic " + Base64.getEncoder().encodeToString((username + ":sdf" + password).getBytes()));
+        }
+        return requestSpecification;
+    }
+    
+    
   
 }
