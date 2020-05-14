@@ -181,7 +181,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 		
 		Response postResponse;
 		try {
-			postResponse = RestAssured.given()
+			postResponse = createRequestSpecification()
 					.contentType(MediaTypes.TEXT_TURTLE)
 					.header("slug", message.getClassName())					
 					.header("link", "<http://www.w3.org/ns/ldp#BasicContainer>; rel=\"type\"")
@@ -208,7 +208,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 		Model model = trellisUtils.toObject(message.getModel());
 		String urlContainer =  trellisUrlEndPoint + "/" + message.getClassName();
 		
-		Response postResponse = RestAssured.given()
+		Response postResponse = createRequestSpecification()
 				.contentType(MediaTypes.TEXT_TURTLE)
 				.header("slug", message.getIdModel())
 				.body(model, new RdfObjectMapper()).post(urlContainer);
@@ -233,7 +233,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
         String resourceID = trellisUtils.toResourceId(message.getIdModel());
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
         
-        Response deleteResponse = RestAssured.given().delete(urlContainer);
+        Response deleteResponse = createRequestSpecification().delete(urlContainer);
        
         if (deleteResponse.getStatusCode() != HttpStatus.SC_OK && deleteResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
             logger.error("Error deleting the object: " + message.getModel());
@@ -250,7 +250,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
         
         Model model = trellisUtils.toObject(message.getModel());        
-        Response postResponse = RestAssured.given()
+        Response postResponse = createRequestSpecification()
                 .contentType(MediaTypes.TEXT_TURTLE)
                 .body(model, new RdfObjectMapper()).put(urlContainer);
         
