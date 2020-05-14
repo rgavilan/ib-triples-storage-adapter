@@ -98,7 +98,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	 * @param message the message
 	 */
 	public void save(ManagementBusEvent message) {
-		logger.info("Saving object in trellis : " + message.toString());
+		logger.info("Saving object in trellis: {} - {}", message.getClassName(), message.getIdModel());
 
 		if(StringUtils.isNoneBlank(message.getIdModel())) {
 			if(!existsContainer(message)) {
@@ -111,7 +111,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	}
 	
 	private void update(ManagementBusEvent message) {
-        logger.info("Updating object in trellis : " + message.toString());
+        logger.info("Updating object in trellis: {} - {}", message.getClassName(), message.getIdModel());
 
         if(StringUtils.isNoneBlank(message.getIdModel())) {            
             // we update the entry in trellis
@@ -126,7 +126,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	 * @param message the message
 	 */
 	private void delete(ManagementBusEvent message) {
-	    logger.info("Deleting object in trellis : " + message.toString());
+	    logger.info("Deleting object in trellis: {} - {}", message.getClassName(), message.getIdModel());
 
         if(StringUtils.isNoneBlank(message.getIdModel())) {            
             // we delete the entry in trellis
@@ -214,10 +214,10 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 				.body(model, new RdfObjectMapper()).post(urlContainer);
 		
 		if (postResponse.getStatusCode() != HttpStatus.SC_CREATED) {
-			logger.error("Error saving the object: " + message.getModel());
+			logger.error("Error saving the object: {} - {}", message.getClassName(), message.getIdModel());
 			logger.error("Operation: " + message.getOperation());
 			logger.error("cause: " + postResponse.getBody().asString());
-			throw new RuntimeTrellisException("Error saving in Trellis the object: " + message.getModel());
+			throw new RuntimeTrellisException("Error saving in Trellis the object: " + message.getClassName() + " - " + message.getIdModel());
 		} else {
 			logger.info("GRAYLOG-TS Creado recurso en trellis de tipo: " + message.getClassName());
 		}
@@ -236,10 +236,10 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
         Response deleteResponse = createRequestSpecification().delete(urlContainer);
        
         if (deleteResponse.getStatusCode() != HttpStatus.SC_OK && deleteResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
-            logger.error("Error deleting the object: " + message.getModel());
+            logger.error("Error deleting the object: {} - {}", message.getClassName(), message.getIdModel());
             logger.error("Operation: " + message.getOperation());
             logger.error("cause: " + deleteResponse.getBody().asString());
-            throw new RuntimeTrellisException("Error deleting in Trellis the object: " + message.getModel());
+            throw new RuntimeTrellisException("Error deleting in Trellis the object: " + message.getClassName() + " - " + message.getIdModel());
         } else {
             logger.info("GRAYLOG-TS Eliminado recurso en trellis de tipo: " + message.getClassName());
         }
@@ -255,10 +255,10 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
                 .body(model, new RdfObjectMapper()).put(urlContainer);
         
         if (postResponse.getStatusCode() != HttpStatus.SC_OK && postResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
-            logger.error("Error updating the object: " + message.getModel());
+            logger.error("Error updating the object: {} - {}", message.getClassName(), message.getIdModel());
             logger.error("Operation: " + message.getOperation());
             logger.error("cause: " + postResponse.getBody().asString());
-            throw new RuntimeTrellisException("Error updating in Trellis the object: " + message.getModel());
+            throw new RuntimeTrellisException("Error updating in Trellis the object: " + message.getClassName() + " - " + message.getIdModel());
         } else {
             logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: " + message.getClassName());
         }

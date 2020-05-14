@@ -80,7 +80,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	 * @throws MediaWikiApiErrorException 
 	 */
 	void save(ManagementBusEvent message) throws TripleStoreException {
-	    logger.info("Saving object in Wikibase : " + message.toString());
+	    logger.info("Saving object in Wikibase: {} - {}", message.getClassName(), message.getIdModel());
 
 		Model model = trellisUtils.toObject(message.getModel());
         List<Statement> statements =  model.listStatements().toList();
