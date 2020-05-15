@@ -1,6 +1,7 @@
 package es.um.asio.service.service.impl;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,10 +22,12 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
+
 import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.service.TriplesStorageService;
 import es.um.asio.service.util.TrellisUtils;
+import es.um.asio.service.util.WikibaseConstants;
 import es.um.asio.service.util.WikibaseUtils;
 import es.um.asio.service.wikibase.WikibaseOperations;
 
@@ -58,17 +61,34 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 			this.logger.debug("Insert new message: {}", message);
 		}
 
-		switch (message.getOperation()) {
-		case INSERT:		    
-	        this.save(message);
-			break;
-		case UPDATE:
-			break;
-		case DELETE:
-			break;
-		default:
-			break;
+		if(checkAllowedDataPolicy(message)) {
+			switch (message.getOperation()) {
+			case INSERT:		    
+				this.save(message);
+				break;
+			case UPDATE:
+				break;
+			case DELETE:
+				break;
+			default:
+				break;
+			}			
+		} else {
+			this.logger.warn("The type {} is not allowed to process in Wikibase ", message.getClassName());
 		}
+	}
+	
+	/**
+	 * Check allowed data policy.
+	 * Allowed type of data:
+	 * {@value es.um.asio.service.util.WikibaseConstants#ALLOWED_TYPE_DATA} 
+	 * @param message the message
+	 * @return true, if successful
+	 */
+	private boolean checkAllowedDataPolicy(ManagementBusEvent message) {
+		boolean result = false;
+		result = Arrays.asList(WikibaseConstants.ALLOWED_TYPE_DATA).stream().anyMatch(s->message.getClassName().equalsIgnoreCase(s));
+		return result;
 	}
 
 	/**
