@@ -1,6 +1,6 @@
 # ASIO - Triples Storage Adapter
 
-Arquetipo Java para API Rest con base de datos relacional
+Storage adapter para el almacenamiento de tripletas para el proyecto Backend SGI (ASIO).
 
 ## OnBoarding
 
