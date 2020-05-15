@@ -61,7 +61,9 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 			this.logger.debug("Insert new message: {}", message);
 		}
 
-		if(checkAllowedDataPolicy(message)) {
+		if(checkNotAllowedDataPolicy(message)) {
+			this.logger.warn("The type {} is not allowed to process in Wikibase ", message.getClassName());
+		} else {
 			switch (message.getOperation()) {
 			case INSERT:		    
 				this.save(message);
@@ -72,22 +74,20 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 				break;
 			default:
 				break;
-			}			
-		} else {
-			this.logger.warn("The type {} is not allowed to process in Wikibase ", message.getClassName());
+			}
 		}
 	}
 	
 	/**
 	 * Check allowed data policy.
 	 * Allowed type of data:
-	 * {@value es.um.asio.service.util.WikibaseConstants#ALLOWED_TYPE_DATA} 
+	 * {@value es.um.asio.service.util.WikibaseConstants#NOT_ALLOWED_TYPE_DATA} 
 	 * @param message the message
 	 * @return true, if successful
 	 */
-	private boolean checkAllowedDataPolicy(ManagementBusEvent message) {
+	private boolean checkNotAllowedDataPolicy(ManagementBusEvent message) {
 		boolean result = false;
-		result = Arrays.asList(WikibaseConstants.ALLOWED_TYPE_DATA).stream().anyMatch(s->message.getClassName().equalsIgnoreCase(s));
+		result = Arrays.asList(WikibaseConstants.NOT_ALLOWED_TYPE_DATA).stream().anyMatch(s->message.getClassName().toLowerCase().equals(s.toLowerCase()));
 		return result;
 	}
 
