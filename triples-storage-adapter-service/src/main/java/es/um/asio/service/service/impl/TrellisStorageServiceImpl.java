@@ -214,15 +214,41 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 				.body(model, new RdfObjectMapper()).post(urlContainer);
 		
 		if (postResponse.getStatusCode() != HttpStatus.SC_CREATED) {
-			logger.error("Error saving the object: {} - {}", message.getClassName(), message.getIdModel());
-			logger.error("Operation: " + message.getOperation());
-			logger.error("cause: " + postResponse.getBody().asString());
-			throw new RuntimeTrellisException("Error saving in Trellis the object: " + message.getClassName() + " - " + message.getIdModel());
+			logger.warn("Warn: saving the object: " + message.getModel());
+			logger.warn("Operation: " + message.getOperation());
+			logger.warn("cause: " + postResponse.getBody().asString());
+			logger.warn("Warn: saving in Trellis the object: " + message.getModel());
+
 		} else {
 			logger.info("GRAYLOG-TS Creado recurso en trellis de tipo: " + message.getClassName());
 		}
 	}
 	
+	
+	/**
+	 * Update entry.
+	 *
+	 * @param message the message
+	 */
+	public void updateEntry(ManagementBusEvent message) {        
+        String resourceID = trellisUtils.toResourceId(message.getIdModel());
+        String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
+        
+        Model model = trellisUtils.toObject(message.getModel());        
+        Response postResponse = createRequestSpecification()
+                .contentType(MediaTypes.TEXT_TURTLE)
+                .body(model, new RdfObjectMapper()).put(urlContainer);
+        
+        if (postResponse.getStatusCode() != HttpStatus.SC_OK && postResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
+            logger.error("Error updating the object: " + message.getModel());
+            logger.error("Operation: " + message.getOperation());
+            logger.error("cause: " + postResponse.getBody().asString());
+            throw new RuntimeTrellisException("Error updating in Trellis the object: " + message.getModel());
+        } else {
+            logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: " + message.getClassName());
+        }
+    }    
+    
 	
 	 /**
      * Deletes the entry.
@@ -245,25 +271,6 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
         }
     }    
     
-    public void updateEntry(ManagementBusEvent message) {        
-        String resourceID = trellisUtils.toResourceId(message.getIdModel());
-        String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
-        
-        Model model = trellisUtils.toObject(message.getModel());        
-        Response postResponse = createRequestSpecification()
-                .contentType(MediaTypes.TEXT_TURTLE)
-                .body(model, new RdfObjectMapper()).put(urlContainer);
-        
-        if (postResponse.getStatusCode() != HttpStatus.SC_OK && postResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
-            logger.error("Error updating the object: {} - {}", message.getClassName(), message.getIdModel());
-            logger.error("Operation: " + message.getOperation());
-            logger.error("cause: " + postResponse.getBody().asString());
-            throw new RuntimeTrellisException("Error updating in Trellis the object: " + message.getClassName() + " - " + message.getIdModel());
-        } else {
-            logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: " + message.getClassName());
-        }
-    }    
-    
     
     /**
      * Creates the request specification and adds authentication if is required.
@@ -277,7 +284,5 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
         }
         return requestSpecification;
     }
-    
-    
   
 }
