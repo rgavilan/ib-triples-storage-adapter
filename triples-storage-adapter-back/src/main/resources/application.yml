@@ -10,7 +10,27 @@ app:
       - X-Requested-With
       - Content-Type
     maxAge: 3600
-
+    
+  # Trellis
+  trellis:
+    enabled: true
+    endpoint: http://localhost:80
+    authentication:
+      enabled: true
+      username: admin
+      password: admin
+  # Wikibase
+  wikibase:
+    enabled: false
+    api: 
+      url: http://localhost:8181/api.php
+      username: WikibaseAdmin
+      password: WikibaseDockerAdminPass
+    query:
+      default-language: es
+    site:
+      uri: http://localhost:8181/entity/  
+           
   # Cache configuration
   cache:
     embedded:
@@ -39,3 +59,6 @@ management:
       enabled: false
     redis:
       enabled: false
+## In case of configure web endpoints, remove it or change port number
+server:
+  port: ${management.server.port}      

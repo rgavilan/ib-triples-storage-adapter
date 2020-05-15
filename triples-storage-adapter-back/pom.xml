@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -16,6 +18,7 @@
 
 	<properties>
 		<artifact.packaging>war</artifact.packaging>
+		<asio-abstractions.version>1.0-SNAPSHOT</asio-abstractions.version>
 	</properties>
 
 	<dependencies>
@@ -23,6 +26,12 @@
 			<groupId>es.um.asio</groupId>
 			<artifactId>triples-storage-adapter-service</artifactId>
 			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>es.um.asio</groupId>
+			<artifactId>asio-abstractions</artifactId>
+			<version>${asio-abstractions.version}</version>
 		</dependency>
 
 		<dependency>

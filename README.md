@@ -12,6 +12,7 @@ Para iniciar el entorno de desarrollo se necesita cumplir los siguientes requisi
 ** m2e-apt
 ** Lombok
 * Docker
+* Pentaho
 
 
 ### Instalar Lombok
@@ -27,6 +28,12 @@ En caso que de problemas a la hora de generar las clases de Mapstruct, es precis
 ```
 -javaagent:C:\desarrollo\java\install\eclipse-jee-2018-12-R-win32-x86_64\lombok-patched-1.18.6.jar
 ```
+
+
+### Instalar Pentaho
+
+Se debe descargar de  [https://sourceforge.net/projects/pentaho/files/Pentaho%209.0/server/](https://sourceforge.net/projects/pentaho/files/Pentaho%209.0/server/) la versión pdi-ce-9.0.0.0-423.zip
+
 
 ## Metodología de desarrollo
 
@@ -51,3 +58,23 @@ Se ha añadido la posibilidad de utilizar Swagger, el cual se ha configurado com
 Para acceder a Swagger, se utilizará la siguiente URL:
 
 http://localhost:8080/swagger-ui.html
+
+## Instalación en entorno real
+
+Será preciso configurar las siguientes variables de entorno cuando se instale en un entorno real:
+
+|Variable|Descripción|Valor por defecto|
+|---|---|---|
+|`APP_TRELLIS_ENABLED`|Flag que indica si se debe persistir en Trellis. Valores admisibles `true` y `false`|true|
+|`APP_TRELLIS_ENDPOINT`|URL del servicio de Trellis|http://localhost:80|
+|`APP_TRELLIS_AUTHENTICATION_ENABLED`|Flag que indica si se debe añadir autenticación a las peticiones Trellis. Valores admisibles `true` y `false`|false|
+|`APP_TRELLIS_AUTHENTICATION_USERNAME`|Usuario Trellis|admin|
+|`APP_TRELLIS_AUTHENTICATION_PASSWORD`|Contraseña Trellis|admin|
+|`APP_WIKIBASE_ENABLED`|Flag que indica si se debe persistir en Wikibase. Valores admisibles `true` y `false`|false|
+|`APP_WIKIBASE_API_URL`|URL del servicio del API de Wikibase|http://localhost:8181/api.php|
+|`APP_WIKIBASE_API_USERNAME`|Usuario en Wikibase|WikibaseAdmin|
+|`APP_WIKIBASE_API_PASSWORD`|Contraseña para usuario en Wikibase|WikibaseDockerAdminPass|
+|`APP_WIKIBASE_API_QUERY_DEFAULT_LANGUAGE`|Lenguaje por defecto en Wikibase|es|
+|`APP_WIKIBASE_API_SITE_URI`|URL del servicio de entidad en Wikibase|http://localhost:8181/entity/|
+
+
