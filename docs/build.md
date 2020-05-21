@@ -17,12 +17,6 @@ Para realizar la compilación se ejecutará el siguiente comando:
 mvn clean package
 ```
 
-En caso de querer generar al mismo tiempo Sources el comando siguiente: 
-
-```bash
-mvn clean package source:jar
-```
-
 También sería posible instalar o desplegar los artefactos sustituyendo `package` por `install` o `deploy` respectivamente.
 
 Los artefactos se generarán dentro del directorio `target` de cada uno de los módulos:
@@ -32,33 +26,28 @@ Los artefactos se generarán dentro del directorio `target` de cada uno de los m
 Los artefactos se encuentran dentro de triples-storage-adapter-back/target
 
 * Artefacto: triples-storage-adapter-back-{version}.jar
-* Sources: triples-storage-adapter-back-{version}-sources.jar
 
 ### Service
 
 Los artefactos se encuentran dentro de triples-storage-adapter-service/target
 
 * Artefacto: triples-storage-adapter-service-{version}.jar
-* Sources: triples-storage-adapter-service-{version}-sources.jar
 
 ### Service Abstractions
 
 Los artefactos se encuentran dentro de triples-storage-adapter-service-abstractions/target
 
 * Artefacto: triples-storage-adapter-service-abstractions-{version}.jar
-* Sources: triples-storage-adapter-service-abstractions-{version}-sources.jar
 
 ### Swagger
 
 Los artefactos se encuentran dentro de triples-storage-adapter-swagger/target
 
 * Artefacto: triples-storage-adapter-swagger-{version}.jar
-* Sources: triples-storage-adapter-swagger-{version}-sources.jar
 
 ### Audit
 
 Los artefactos se encuentran dentro de triples-storage-adapter-audit/target
 
 * Artefacto: triples-storage-adapter-audit-{version}.jar
-* Sources: triples-storage-adapter-audit-{version}-sources.jar
 
