@@ -75,14 +75,19 @@ public class WikibaseTemplate implements WikibaseOperations {
                 }
                 itemNumber += 1000;
                 results = dataFetcher.getEntityDocuments(fetchItems);
+                
+                if(results == null) {
+                	// workaround to fix problem with sonar
+                	return item;
+                }
+                
                 for (final EntityDocument ed : results.values()) {
                     final ItemDocument pd = (ItemDocument) ed;
                     if (pd.getLabels().containsValue(label)) {
                         return pd;
                     }
                 }
-            }
-            while(results!=null && !results.isEmpty());
+            } while(!results.isEmpty());
             
         } catch (Exception e) {
             throw new TripleStoreException(e);

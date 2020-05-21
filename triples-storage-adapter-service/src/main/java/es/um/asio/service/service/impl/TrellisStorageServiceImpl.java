@@ -153,7 +153,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 					.expect()
 					.when().get(urlContainer)
 					.as(Model.class, new RdfObjectMapper(urlContainer));
-					result = model.size() > 0 ? true : false;
+					result = model.size() > 0;
 		} catch (Exception e) {
 			result = false;
 		}
