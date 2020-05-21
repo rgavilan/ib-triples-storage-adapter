@@ -38,7 +38,7 @@ services:
       # CONFIG - Change the default values below
       - MW_ADMIN_NAME=WikibaseAdmin
       - MW_ADMIN_PASS=WikibaseDockerAdminPass
-      - MW_ADMIN_EMAIL=amartino@izertis.com
+      - MW_ADMIN_EMAIL=wikiadmin@admin.com
       - MW_WG_SECRET_KEY=secretkey
       # CONFIG - Change the default values below (should match mysql values in this file)
       - DB_USER=wikiuser

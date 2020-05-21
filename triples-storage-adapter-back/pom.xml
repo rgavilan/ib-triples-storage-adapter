@@ -22,6 +22,8 @@
 	</properties>
 
 	<dependencies>
+
+		<!-- UM ASIO - dependencies -->
 		<dependency>
 			<groupId>es.um.asio</groupId>
 			<artifactId>triples-storage-adapter-service</artifactId>
@@ -30,14 +32,14 @@
 
 		<dependency>
 			<groupId>es.um.asio</groupId>
-			<artifactId>asio-abstractions</artifactId>
-			<version>${asio-abstractions.version}</version>
+			<artifactId>triples-storage-adapter-swagger</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.izertis.libraries</groupId>
-			<artifactId>izertis-swagger-starter</artifactId>
-			<version>${izertis.libraries.version}</version>
+			<groupId>es.um.asio</groupId>
+			<artifactId>asio-abstractions</artifactId>
+			<version>${asio-abstractions.version}</version>
 		</dependency>
 
 		<dependency>

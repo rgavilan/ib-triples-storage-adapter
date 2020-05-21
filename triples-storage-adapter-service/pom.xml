@@ -29,24 +29,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-
-		<!-- Izertis dependencies -->
+		
+		<!-- UM ASIO - dependencies -->
+		<dependency>
+			<groupId>es.um.asio</groupId>
+			<artifactId>triples-storage-adapter-service-abstractions</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>es.um.asio</groupId>
 			<artifactId>asio-abstractions</artifactId>
 			<version>${asio-abstractions.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.izertis.libraries</groupId>
-			<artifactId>izertis-cache-starter</artifactId>
-			<version>${izertis.libraries.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.izertis.libraries</groupId>
-			<artifactId>izertis-service-abstractions</artifactId>
-			<version>${izertis.libraries.version}</version>
 		</dependency>
 
 		<!-- Additional dependencies -->

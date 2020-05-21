@@ -42,3 +42,28 @@ Los artefactos se encuentran dentro de triples-storage-adapter-service/target
 * Artefacto: triples-storage-adapter-service-{version}.jar
 * JavaDoc: triples-storage-adapter-service-{version}-javadoc.jar
 * Sources: triples-storage-adapter-service-{version}-sources.jar
+
+### Service Abstractions
+
+Los artefactos se encuentran dentro de triples-storage-adapter-service-abstractions/target
+
+* Artefacto: triples-storage-adapter-service-abstractions-{version}.jar
+* JavaDoc: triples-storage-adapter-service-abstractions-{version}-javadoc.jar
+* Sources: triples-storage-adapter-service-abstractions-{version}-sources.jar
+
+### Swagger
+
+Los artefactos se encuentran dentro de triples-storage-adapter-swagger/target
+
+* Artefacto: triples-storage-adapter-swagger-{version}.jar
+* JavaDoc: triples-storage-adapter-swagger-{version}-javadoc.jar
+* Sources: triples-storage-adapter-swagger-{version}-sources.jar
+
+### Audit
+
+Los artefactos se encuentran dentro de triples-storage-adapter-audit/target
+
+* Artefacto: triples-storage-adapter-audit-{version}.jar
+* JavaDoc: triples-storage-adapter-audit-{version}-javadoc.jar
+* Sources: triples-storage-adapter-audit-{version}-sources.jar
+

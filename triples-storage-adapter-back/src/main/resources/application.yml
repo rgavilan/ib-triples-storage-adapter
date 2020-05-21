@@ -30,11 +30,6 @@ app:
       default-language: es
     site:
       uri: http://localhost:8181/entity/  
-           
-  # Cache configuration
-  cache:
-    embedded:
-      enabled: true
 
   # Swagger
   swagger:
