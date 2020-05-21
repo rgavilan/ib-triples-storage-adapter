@@ -219,6 +219,12 @@ public class WikibaseTemplate implements WikibaseOperations {
             }
             propertyNumber += 1000;
             results = dataFetcher.getEntityDocuments(fetchProperties);
+            
+            if(results == null) {
+            	// workaround to fix problem with sonar
+            	return property;
+            }
+            
             for (final EntityDocument ed : results.values()) {
                 final PropertyDocument pd = (PropertyDocument) ed;
                 if (dataTypeIdValue.equals(pd.getDatatype().getIri()) && pd.getLabels().containsValue(label)) {                    
@@ -226,7 +232,7 @@ public class WikibaseTemplate implements WikibaseOperations {
                 }
             }
         }
-        while(results!=null && !results.isEmpty());
+        while(!results.isEmpty());
         
         return property;
     }
