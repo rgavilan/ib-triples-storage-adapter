@@ -1,1 +1,0 @@
-package es.um.asio.wikibase.test;

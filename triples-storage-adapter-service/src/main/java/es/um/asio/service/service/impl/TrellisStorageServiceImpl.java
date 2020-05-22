@@ -43,7 +43,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	@Value("${app.trellis.endpoint}")
 	private String trellisUrlEndPoint;
 	
-    @Value("${app.trellis.authentication.enabled}")
+    @Value("${app.trellis.authentication.enabled:false}")
     private Boolean authenticationEnabled;
     
     @Value("${app.trellis.authentication.username}")
