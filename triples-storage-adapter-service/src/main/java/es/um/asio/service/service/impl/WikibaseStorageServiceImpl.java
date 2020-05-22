@@ -88,7 +88,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	private boolean checkNotAllowedDataPolicy(ManagementBusEvent message) {
 		boolean result = false;
 		result = Arrays.asList(WikibaseConstants.ALLOWED_TYPE_DATA).stream().anyMatch(s->message.getClassName().equalsIgnoreCase(s));
-		return result;
+		return !result;
 	}
 
 	/**
