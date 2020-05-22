@@ -59,7 +59,7 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
         
         var itemDocument = wikibaseOperations.getItem(label);
         if(itemDocument != null) {
-            itemsMap.put(entityKey, itemDocumentCached);        
+            itemsMap.put(entityKey, itemDocument);        
         }
         
         return itemDocument;
@@ -79,7 +79,7 @@ public class WikibaseTemplateCacheDecorator implements WikibaseOperations {
         
         var itemDocument = wikibaseOperations.getOrCreateItem(label);
         if(itemDocument != null) {
-            itemsMap.put(entityKey, itemDocumentCached);        
+            itemsMap.put(entityKey, itemDocument);        
         }
         
         return itemDocument;
