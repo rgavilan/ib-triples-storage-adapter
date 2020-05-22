@@ -149,6 +149,7 @@
 		<module>triples-storage-adapter-service</module>
 		<module>triples-storage-adapter-service-abstractions</module>
 		<module>triples-storage-adapter-swagger</module>
+		<module>triples-storage-adapter-test</module>
 	</modules>
 	
 	<build>
