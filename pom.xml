@@ -308,6 +308,14 @@
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
 						</configuration>
 					</execution>
+					
+					<execution>
+						<id>report-aggregate</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+					</execution>
 				</executions>
 			</plugin>
 
