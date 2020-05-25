@@ -9,7 +9,7 @@
 | Módulo         | Storage adapter                                              |
 | Tipo           | Software                                                     |
 | Objetivo       | Storage adapter para el almacenamiento de tripletas para el proyecto Backend SGI (ASIO). |
-| Estado         | **50%** El Storage Adapter guarda los datos en Trellis y Wikidata |
+| Estado         | **60%** El Storage Adapter guarda los datos en Trellis y Wikidata |
 | Próximos pasos | Ampliarlo para que realice la actualización de datos y el borrado. |
 | Documentación  | [Manual de usuario](https://github.com/HerculesCRUE/ib-asio-docs-/blob/master/entregables_hito_1/12-An%C3%A1lisis/Manual%20de%20usuario/Manual%20de%20usuario.md)<br />[Manual de despliegue](https://github.com/HerculesCRUE/ib-asio-composeset/blob/master/README.md)<br />[Documentación técnica](https://github.com/HerculesCRUE/ib-asio-docs-/blob/master/entregables_hito_1/11-Arquitectura/ASIO_Izertis_Arquitectura.md) |
 
