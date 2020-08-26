@@ -34,6 +34,11 @@ app:
   # Swagger
   swagger:
     enabled: false
+    
+  # factory uris  
+  generator-uris:
+    endpoint: http://localhost:9326
+    endpoint-link-uri: ${app.generator-uris.endpoint}/uri-factory/local
 
 ## Actuator
 management:

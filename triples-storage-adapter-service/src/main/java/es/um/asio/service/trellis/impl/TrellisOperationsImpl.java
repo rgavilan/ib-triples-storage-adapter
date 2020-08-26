@@ -1,7 +1,8 @@
 package es.um.asio.service.trellis.impl;
 
 import java.util.Base64;
-import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.HttpStatus;
 import org.apache.jena.rdf.model.Model;
@@ -12,7 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.trellisldp.api.RuntimeTrellisException;
 
 import com.jayway.restassured.RestAssured;
@@ -25,14 +29,13 @@ import es.um.asio.service.util.MediaTypes;
 import es.um.asio.service.util.RdfObjectMapper;
 import es.um.asio.service.util.TrellisUtils;
 
-/**
- * The Class TrellisOperationsImpl.
- */
 @Service
 public class TrellisOperationsImpl implements TrellisOperations {
 
+	/** The logger. */
     private final Logger logger = LoggerFactory.getLogger(TrellisOperationsImpl.class);
-
+    
+    /** The trellis utils. */
     @Autowired
     private TrellisUtils trellisUtils;
     
@@ -51,7 +54,27 @@ public class TrellisOperationsImpl implements TrellisOperations {
     /** The password. */
     @Value("${app.trellis.authentication.password}")
     private String password;
+    
+    
+    /** The uri factory endpoint. */
+    @Value("${app.generator-uris.endpoint-link-uri}")
+    private String uriFactoryEndpoint;
 
+    // Constants
+    private static final String TRELLIS = "trellis";
+	private static final String STORAGE_NAME = "storageName";
+	private static final String LOCAL_URI = "localURI";
+	private static final String CANONICAL_LANGUAGE_URI = "canonicalLanguageURI";
+
+    
+    /** Rest Template. */
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
   
     /**
      * Exists container.
@@ -131,11 +154,11 @@ public class TrellisOperationsImpl implements TrellisOperations {
         
         // we only retrieve the id 
         String id = message.getIdModel().split("/")[message.getIdModel().split("/").length - 1];
-        
-        // TODO call factory uris
         String factoryUriNotification = urlContainer + "/" + id;
         
-        logger.info("FactoryUriNotification: {}", factoryUriNotification);
+        // we call to uri factory to notify the insertion
+        logger.info("FactoryUriNotification: canonicalUri {}, localUri {}", message.getIdModel(), factoryUriNotification);
+        this.eventNotifyUrisFactory(message.getIdModel(), factoryUriNotification);
         
         
         Response postResponse = createRequestSpecification()
@@ -213,6 +236,28 @@ public class TrellisOperationsImpl implements TrellisOperations {
             requestSpecification.header("Authorization", "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes()));
         }
         return requestSpecification;
+    }
+    
+    
+    /**
+     * Event notify uris factory.
+     *
+     * @param canonicalUri the canonical uri
+     * @param localUri the local uri
+     */
+    private void eventNotifyUrisFactory(String cannonicalLanguageURI, String localURI) {
+    	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uriFactoryEndpoint)
+    			.queryParam(TrellisOperationsImpl.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI)
+    			.queryParam(TrellisOperationsImpl.LOCAL_URI, localURI)
+    			.queryParam(TrellisOperationsImpl.STORAGE_NAME, TrellisOperationsImpl.TRELLIS)
+    			;
+    	
+    	Map<String, String> obj = new HashMap<String, String>();
+    	obj.put(TrellisOperationsImpl.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI);
+    	obj.put(TrellisOperationsImpl.LOCAL_URI, localURI);
+    	obj.put(TrellisOperationsImpl.STORAGE_NAME, TrellisOperationsImpl.TRELLIS);
+		
+		restTemplate.postForObject(builder.toUriString(), obj, Object.class);
     }
 
    
