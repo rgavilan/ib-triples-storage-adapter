@@ -1,6 +1,7 @@
 package es.um.asio.service.trellis.impl;
 
 import java.util.Base64;
+import java.util.Scanner;
 
 import org.apache.http.HttpStatus;
 import org.apache.jena.rdf.model.Model;
@@ -128,9 +129,18 @@ public class TrellisOperationsImpl implements TrellisOperations {
         Model model = trellisUtils.toObject(message.getModel());
         String urlContainer =  trellisUrlEndPoint + "/" + message.getClassName();
         
+        // we only retrieve the id 
+        String id = message.getIdModel().split("/")[message.getIdModel().split("/").length - 1];
+        
+        // TODO call factory uris
+        String factoryUriNotification = urlContainer + "/" + id;
+        
+        logger.info("FactoryUriNotification: {}", factoryUriNotification);
+        
+        
         Response postResponse = createRequestSpecification()
                 .contentType(MediaTypes.TEXT_TURTLE)
-                .header("slug", message.getIdModel())
+                .header("slug", id)
                 .body(model, new RdfObjectMapper()).post(urlContainer);
         
         if (postResponse.getStatusCode() != HttpStatus.SC_CREATED) {
