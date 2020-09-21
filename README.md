@@ -45,7 +45,7 @@ La metodología de desarrollo es Git Flow.
 
 La inicialización de los elementos adicionales al entorno de desarrollo se realiza con docker.
 
-En el directorio docker-devenv se ha configurado un fichero docker-compose.yml para poder arrancar el entorno de desarrollo.
+En el directorio docker-devenv se ha configurado un fichero docker-compose.yml  por defecto que arranza trellis para poder arrancar el entorno de desarrollo. Hay otras dos carpetas, una con la configuración de wikibase y otra con la configuración de trellis y fuseki apuntando al mismo triplestore.
 
 Para arrancar el entorno:
 
