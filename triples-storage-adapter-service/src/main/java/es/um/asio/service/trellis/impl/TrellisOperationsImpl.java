@@ -1,6 +1,5 @@
 package es.um.asio.service.trellis.impl;
 
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,11 +18,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.trellisldp.api.RuntimeTrellisException;
 
-import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
 
 import es.um.asio.abstractions.domain.ManagementBusEvent;
+import es.um.asio.service.trellis.TrellisCommonOperations;
 import es.um.asio.service.trellis.TrellisOperations;
 import es.um.asio.service.util.MediaTypes;
 import es.um.asio.service.util.RdfObjectMapper;
@@ -39,22 +37,12 @@ public class TrellisOperationsImpl implements TrellisOperations {
     @Autowired
     private TrellisUtils trellisUtils;
     
+    @Autowired
+    private TrellisCommonOperations trellisCommonOperations;
+    
     /** The trellis url end point. */
     @Value("${app.trellis.endpoint}")
     private String trellisUrlEndPoint;
-    
-    /** The authentication enabled. */
-    @Value("${app.trellis.authentication.enabled:false}")
-    private Boolean authenticationEnabled;
-    
-    /** The username. */
-    @Value("${app.trellis.authentication.username}")
-    private String username;
-   
-    /** The password. */
-    @Value("${app.trellis.authentication.password}")
-    private String password;
-    
     
     /** The uri factory endpoint. */
     @Value("${app.generator-uris.endpoint-link-uri}")
@@ -92,7 +80,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
         String urlContainer =  trellisUrlEndPoint + "/" + message.getClassName();
         Model model;
         try {
-            model = createRequestSpecification()
+            model = trellisCommonOperations.createRequestSpecification()
                     .header("Accept", MediaTypes.TEXT_TURTLE)
                     .expect()
                     .when().get(urlContainer)
@@ -126,7 +114,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
         
         Response postResponse;
         try {
-            postResponse = createRequestSpecification()
+            postResponse = trellisCommonOperations.createRequestSpecification()
                     .contentType(MediaTypes.TEXT_TURTLE)
                     .header("slug", message.getClassName())                 
                     .header("link", "<http://www.w3.org/ns/ldp#BasicContainer>; rel=\"type\"")
@@ -164,7 +152,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
         this.eventNotifyUrisFactory(message.getIdModel(), factoryUriNotification);
         
         
-        Response postResponse = createRequestSpecification()
+        Response postResponse = trellisCommonOperations.createRequestSpecification()
                 .contentType(MediaTypes.TEXT_TURTLE)
                 .header("slug", id)
                 .body(model, new RdfObjectMapper()).post(urlContainer);
@@ -192,7 +180,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
         
         Model model = trellisUtils.toObject(message.getModel());        
-        Response postResponse = createRequestSpecification()
+        Response postResponse = trellisCommonOperations.createRequestSpecification()
                 .contentType(MediaTypes.TEXT_TURTLE)
                 .body(model, new RdfObjectMapper()).put(urlContainer);
         
@@ -216,7 +204,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
         String resourceID = trellisUtils.toResourceId(message.getIdModel());
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
         
-        Response deleteResponse = createRequestSpecification().delete(urlContainer);
+        Response deleteResponse = trellisCommonOperations.createRequestSpecification().delete(urlContainer);
        
         if (deleteResponse.getStatusCode() != HttpStatus.SC_OK && deleteResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
             logger.error("Error deleting the object: {} - {}", message.getClassName(), message.getIdModel());
@@ -227,20 +215,6 @@ public class TrellisOperationsImpl implements TrellisOperations {
             logger.info("GRAYLOG-TS Eliminado recurso en trellis de tipo: " + message.getClassName());
         }        
     }
-
-    /**
-     * Creates the request specification and adds authentication if is required.
-     *
-     * @return the request specification
-     */
-    private RequestSpecification createRequestSpecification() {
-        RequestSpecification requestSpecification = RestAssured.given();
-        if(authenticationEnabled) {
-            requestSpecification.header("Authorization", "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes()));
-        }
-        return requestSpecification;
-    }
-    
     
     /**
      * Event notify uris factory.

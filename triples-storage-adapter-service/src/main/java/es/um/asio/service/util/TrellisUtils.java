@@ -9,6 +9,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFLanguages;
 import org.springframework.stereotype.Component;
+import org.apache.jena.riot.Lang;
 
 @Component
 public class TrellisUtils {
@@ -18,11 +19,22 @@ public class TrellisUtils {
 	 * @param strModel the str model
 	 * @return the model
 	 */
-	public Model toObject(String strModel) {
+	public Model toObject(String strModel) {		
+		return toObject(strModel, RDFLanguages.RDFXML);
+	}
+	
+	/**
+	 * To object.
+	 *
+	 * @param strModel the str model
+	 * @param language the language
+	 * @return the model
+	 */
+	public Model toObject(String strModel, Lang language) {
 		StringReader stringReader = new StringReader(strModel);
 
 		Model modelFromString = ModelFactory.createDefaultModel();
-		RDFDataMgr.read(modelFromString, stringReader, null, RDFLanguages.RDFXML);
+		RDFDataMgr.read(modelFromString, stringReader, null, language);
 
 		return modelFromString;
 	}

@@ -1,21 +1,24 @@
 package es.um.asio.service.service.impl;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import es.um.asio.abstractions.constants.Constants;
 import es.um.asio.abstractions.domain.ManagementBusEvent;
-import es.um.asio.abstractions.storage.StorageType;
 import es.um.asio.service.service.TriplesStorageService;
+import es.um.asio.service.service.uris.UrisFactoryClient;
 import es.um.asio.service.trellis.TrellisLinkOperations;
 import es.um.asio.service.trellis.TrellisOperations;
 
@@ -38,6 +41,9 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	/** The trellis link operations. */
 	@Autowired
 	private TrellisLinkOperations trellisLinkOperations;
+	
+	@Autowired
+	private UrisFactoryClient urisFactoryClient;
 	
 		
 	/**
@@ -66,6 +72,27 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	}
 	
 	/**
+	 * Safety check.
+	 *
+	 * @param obj the obj
+	 * @return the string
+	 */
+	private String safetyCheck(Object obj) {
+		String result = StringUtils.EMPTY;
+		if (obj == null) {
+			return result;
+		}
+		if (obj instanceof Number) {
+			return ((Number) obj).toString();
+		}
+		if (obj instanceof String) {
+			return (String) obj;
+		}
+
+		return result;
+	}
+	
+	/**
 	 * Save.
 	 *
 	 * @param message the message
@@ -82,18 +109,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			trellisOperations.createEntry(message);
 		}
 	}
-	
-	
-	/**
-	 * Save links.
-	 *
-	 * @param message the message
-	 */
-	private void saveLinks(ManagementBusEvent message) {
-		logger.info("Saving links in trellis: {}", message.getClassName());
-		Model model = trellisLinkOperations.createLinksEntry(message);
-	}
-	
+				
 				
 	private void update(ManagementBusEvent message) {
         logger.info("Updating object in trellis: {} - {}", message.getClassName(), message.getIdModel());
@@ -117,5 +133,61 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
             trellisOperations.deleteEntry(message);
         }
 	}
+	
+	
+	/**
+	 * Save links.
+	 *
+	 * @param message the message
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void saveLinks(ManagementBusEvent message) {
+		logger.info("Saving links in trellis: {}", message.getClassName());
+			
+		
+		try {
+			
+			Object obj = message.getLinkedModel();
+			final String objectIdParent = this.safetyCheck(PropertyUtils.getProperty(obj, "id"));
+			final String classNameParent = (String) PropertyUtils.getProperty(obj, "@class");
+			Model model = trellisLinkOperations.createLinksEntry(objectIdParent, classNameParent);
+			
+			
+			
+			String className, fieldName;
+			ArrayList<String> ids;
+			LinkedHashMap<String, Object> item;
+			
+			LinkedHashMap<String, Object> params = (LinkedHashMap<String, Object>) message.getLinkedModel();
+			ArrayList objetsToLink = (ArrayList) params.get(Constants.LINKED_TO);
+			
+			for (int i = 0; i < objetsToLink.size(); i++) {
+				item = (LinkedHashMap<String, Object>) objetsToLink.get(i);
+				
+				className = (String) PropertyUtils.getProperty(item, "className");
+				fieldName = (String) PropertyUtils.getProperty(item, "fieldName");
+				ids = (ArrayList<String>) PropertyUtils.getProperty(item, "ids");
+				
+				// we retrieve the parent
+				String canonicalURIFromParent = "http://hercules.org/um/es-ES/rec/Grupo-investigacion/c4ca4238-a0b9-3382-8dcc-509a6f75849b";
+				Resource resource = model.getResource(canonicalURIFromParent);
+				
+				String canonicalURIProperty = "http://hercules.org/um/res/" + fieldName;
+				final Property property = model.createProperty(canonicalURIProperty, fieldName);
+				
+				String canonicalURIFromSonObject = "http://hercules.org/um/es-ES/rec/Universidad/c4ca4238-a0b9-3382-8dcc-509a6f75849b";
+				RDFNode node = model.createResource(canonicalURIFromSonObject);
+				
+				resource.addProperty(property, node);
+				
+				
+			} 
+		} catch (Exception e) {
+			this.logger.error("Error saving links cause " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 }
