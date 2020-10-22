@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.um.asio.abstractions.domain.ManagementBusEvent;
-import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.proxy.TriplesStorageProxy;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

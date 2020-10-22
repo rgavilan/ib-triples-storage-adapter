@@ -1,13 +1,22 @@
 package es.um.asio.service.service.impl;
 
+import java.util.Map;
+
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import es.um.asio.abstractions.constants.Constants;
 import es.um.asio.abstractions.domain.ManagementBusEvent;
+import es.um.asio.abstractions.storage.StorageType;
 import es.um.asio.service.service.TriplesStorageService;
+import es.um.asio.service.trellis.TrellisLinkOperations;
 import es.um.asio.service.trellis.TrellisOperations;
 
 /**
@@ -26,6 +35,11 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	@Autowired
 	private TrellisOperations trellisOperations;
 	
+	/** The trellis link operations. */
+	@Autowired
+	private TrellisLinkOperations trellisLinkOperations;
+	
+		
 	/**
 	 * Process.
 	 *
@@ -42,6 +56,9 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			break;
 		case DELETE:
 		    this.delete(message);
+			break;
+		case LINKED_INSERT:
+			this.saveLinks(message);
 			break;
 		default:
 			break;
@@ -66,6 +83,18 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 		}
 	}
 	
+	
+	/**
+	 * Save links.
+	 *
+	 * @param message the message
+	 */
+	private void saveLinks(ManagementBusEvent message) {
+		logger.info("Saving links in trellis: {}", message.getClassName());
+		Model model = trellisLinkOperations.createLinksEntry(message);
+	}
+	
+				
 	private void update(ManagementBusEvent message) {
         logger.info("Updating object in trellis: {} - {}", message.getClassName(), message.getIdModel());
 
@@ -88,6 +117,5 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
             trellisOperations.deleteEntry(message);
         }
 	}
-
-  
+	
 }

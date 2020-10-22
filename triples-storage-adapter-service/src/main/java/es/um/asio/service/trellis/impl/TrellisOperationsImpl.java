@@ -59,6 +59,8 @@ public class TrellisOperationsImpl implements TrellisOperations {
     /** The uri factory endpoint. */
     @Value("${app.generator-uris.endpoint-link-uri}")
     private String uriFactoryEndpoint;
+    
+   
 
     // Constants
     private static final String TRELLIS = "trellis";
@@ -76,6 +78,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
         return new RestTemplate();
     }
   
+    
     /**
      * Exists container.
      *
@@ -249,16 +252,15 @@ public class TrellisOperationsImpl implements TrellisOperations {
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uriFactoryEndpoint)
     			.queryParam(TrellisOperationsImpl.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI)
     			.queryParam(TrellisOperationsImpl.LOCAL_URI, localURI)
-    			.queryParam(TrellisOperationsImpl.STORAGE_NAME, TrellisOperationsImpl.TRELLIS)
-    			;
+    			.queryParam(TrellisOperationsImpl.STORAGE_NAME, TrellisOperationsImpl.TRELLIS);
     	
     	Map<String, String> obj = new HashMap<String, String>();
     	obj.put(TrellisOperationsImpl.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI);
     	obj.put(TrellisOperationsImpl.LOCAL_URI, localURI);
     	obj.put(TrellisOperationsImpl.STORAGE_NAME, TrellisOperationsImpl.TRELLIS);
 		
-		restTemplate.postForObject(builder.toUriString(), obj, Object.class);
+    	Object response = restTemplate.postForObject(builder.toUriString(), obj, Object.class);
+    	this.logger.info(response.toString());
     }
 
-   
 }

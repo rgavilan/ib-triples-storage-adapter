@@ -17,6 +17,7 @@
 
 	<properties>
 		<asio-abstractions.version>1.0-SNAPSHOT</asio-abstractions.version>
+		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 		<jena.version>3.14.0</jena.version>
 		<trellis-api.version>0.8.3</trellis-api.version>
 		<rest-assured.version>2.3.3</rest-assured.version>
@@ -69,6 +70,12 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>${commons-beanutils.version}</version>
 		</dependency>
 
 		<dependency>
