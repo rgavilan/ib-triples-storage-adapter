@@ -10,4 +10,6 @@ public interface TrellisLinkOperations {
      * @param message the message
      */
     Model createLinksEntry(String id, String className);
+    
+    void updateLinksEntry(Model model, String localUri);
 }

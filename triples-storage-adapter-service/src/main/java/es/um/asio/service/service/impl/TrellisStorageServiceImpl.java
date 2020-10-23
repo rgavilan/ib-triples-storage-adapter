@@ -144,14 +144,11 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	private void saveLinks(ManagementBusEvent message) {
 		logger.info("Saving links in trellis: {}", message.getClassName());
 			
-		
 		try {
-			
 			Object obj = message.getLinkedModel();
-			final String objectIdParent = this.safetyCheck(PropertyUtils.getProperty(obj, "id"));
-			final String classNameParent = (String) PropertyUtils.getProperty(obj, "@class");
+			final String objectIdParent = this.safetyCheck(PropertyUtils.getProperty(obj, Constants.ID));
+			final String classNameParent = (String) PropertyUtils.getProperty(obj, Constants.CLASS);
 			Model model = trellisLinkOperations.createLinksEntry(objectIdParent, classNameParent);
-			
 			
 			
 			String className, fieldName;
@@ -168,26 +165,32 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 				fieldName = (String) PropertyUtils.getProperty(item, "fieldName");
 				ids = (ArrayList<String>) PropertyUtils.getProperty(item, "ids");
 				
-				// we retrieve the parent
-				String canonicalURIFromParent = "http://hercules.org/um/es-ES/rec/Grupo-investigacion/c4ca4238-a0b9-3382-8dcc-509a6f75849b";
+				// we retrieve the canonical uri from parent
+				String canonicalURIFromParent = this.urisFactoryClient.getCanonicalUriByResource(objectIdParent, classNameParent);
 				Resource resource = model.getResource(canonicalURIFromParent);
 				
-				String canonicalURIProperty = "http://hercules.org/um/res/" + fieldName;
+				// we create the property in uri's factory
+				this.urisFactoryClient.createProperty(fieldName);
+				String canonicalURIProperty = Constants.ROOT_URI + "/" + Constants.SUBDOMAIN_VALUE + "/" + Constants.TYPE_REST + "/";
 				final Property property = model.createProperty(canonicalURIProperty, fieldName);
 				
-				String canonicalURIFromSonObject = "http://hercules.org/um/es-ES/rec/Universidad/c4ca4238-a0b9-3382-8dcc-509a6f75849b";
-				RDFNode node = model.createResource(canonicalURIFromSonObject);
-				
-				resource.addProperty(property, node);
-				
-				
+				// we add the nodes
+				String canonicalURIFromSonObject;
+				for(int j=0; j < ids.size(); j++) {
+					// we retrieve the canonical uri from parent
+					canonicalURIFromSonObject = this.urisFactoryClient.getCanonicalUriByResource(ids.get(j), className);
+					RDFNode node = model.createResource(canonicalURIFromSonObject);
+					resource.addProperty(property, node);
+				}
 			} 
+			
+			// we save the new model
+			String localUri = this.urisFactoryClient.getLocalStorageUriByResource(objectIdParent, classNameParent);
+			trellisLinkOperations.updateLinksEntry(model, localUri);
+			
 		} catch (Exception e) {
 			this.logger.error("Error saving links cause " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
 }

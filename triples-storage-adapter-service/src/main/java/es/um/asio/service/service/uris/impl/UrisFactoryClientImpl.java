@@ -1,10 +1,12 @@
 package es.um.asio.service.service.uris.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.atlas.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,10 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	@Value("${app.generator-uris.endpoint-local-property-storage-uri}")
 	private String localPropertyStorageUri;
 	
+	/** The uri property. */
+	@Value("${app.generator-uris.endpoint-property}")
+	private String uriProperty;
+	
 	/** Rest Template. */
 	@Autowired
 	private RestTemplate restUrisTemplate;
@@ -64,7 +70,7 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	 * @return the canonical uri by resource
 	 */
 	public String getCanonicalUriByResource(String id, String className) {
-		return this.getUriByResource(id, className, Constants.LOCAL_URI);
+		return this.getUriByResource(id, className, "canonicalURILanguageStr");
 	}
 	
 	/**
@@ -96,6 +102,38 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 
 		logger.info("LocalStorageUri(id={}, className={}) = {}", id, className, result);
 
+		return result;
+	}
+
+
+	/**
+	 * Creates the property.
+	 *
+	 * @param fieldName the field name
+	 * @return the string
+	 */
+	@Override
+	public String createProperty(String fieldName) {
+		
+		String result = StringUtils.EMPTY;
+		
+		try {
+			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uriProperty)
+					.queryParam(Constants.DOMAIN, Constants.DOMAIN_VALUE)
+					.queryParam(Constants.SUBDOMAIN, Constants.SUBDOMAIN_VALUE)
+					.queryParam(Constants.LANG, Constants.SPANISH_LANGUAGE);
+			
+			Map<String, String> obj = new HashMap<String, String>();
+			obj.put("property", fieldName);	
+			
+			Map response = restUrisTemplate.postForObject(builder.toUriString(), obj, Map.class);			
+			result = (String) response.get(Constants.CANONICAL_URI);
+			
+		} catch (RestClientException e) {
+			logger.error("Error creating property {} cause: {} ", fieldName, e.getMessage());
+			e.printStackTrace();
+		}
+		
 		return result;
 	}
 }

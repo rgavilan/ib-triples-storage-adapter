@@ -2,21 +2,23 @@ package es.um.asio.service.trellis.impl;
 
 import java.net.URI;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFLanguages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.trellisldp.api.RuntimeTrellisException;
 
 import com.jayway.restassured.response.Response;
 
-import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.service.service.uris.UrisFactoryClient;
 import es.um.asio.service.trellis.TrellisCommonOperations;
 import es.um.asio.service.trellis.TrellisLinkOperations;
+import es.um.asio.service.util.MediaTypes;
+import es.um.asio.service.util.RdfObjectMapper;
 import es.um.asio.service.util.TrellisUtils;
 
 @Service
@@ -25,6 +27,10 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
 	/** The logger. */
 	private final Logger logger = LoggerFactory.getLogger(TrellisLinkOperationsImpl.class);
 
+	 /** The trellis url end point. */
+    @Value("${app.trellis.endpoint}")
+    private String trellisUrlEndPoint;
+	
 	@Autowired
 	private TrellisCommonOperations trellisCommonOperations;
 	
@@ -89,4 +95,26 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
 		return result;
 	}
 
+	
+	/**
+     * Update entry.
+     *
+     * @param message the message
+     */
+   
+    public void updateLinksEntry(Model model, String localUri) {
+    	String urlContainer = localUri;
+               
+        Response postResponse = trellisCommonOperations.createRequestSpecification()
+                .contentType(MediaTypes.TEXT_TURTLE)
+                .body(model, new RdfObjectMapper()).put(urlContainer);
+        
+        if (postResponse.getStatusCode() != HttpStatus.SC_OK && postResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
+            
+            logger.error("Error updating links entry cause: " + postResponse.getBody().asString());
+            throw new RuntimeTrellisException("Error updating in Trellis the object: " + localUri);
+        } else {
+            logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: " + localUri);
+        }        
+    }
 }
