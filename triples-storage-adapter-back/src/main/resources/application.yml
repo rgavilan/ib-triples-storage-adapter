@@ -39,7 +39,10 @@ app:
   generator-uris:
     endpoint: http://localhost:9326
     endpoint-link-uri: ${app.generator-uris.endpoint}/uri-factory/local
-
+    endpoint-local-resource-storage-uri: ${app.generator-uris.endpoint}/uri-factory/local/resource
+    endpoint-local-property-storage-uri: ${app.generator-uris.endpoint}/uri-factory/local/property
+    endpoint-property: ${app.generator-uris.endpoint}/uri-factory/canonical/property
+    
 ## Actuator
 management:
   endpoint:
