@@ -127,7 +127,7 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 			obj.put("property", fieldName);	
 			
 			Map response = restUrisTemplate.postForObject(builder.toUriString(), obj, Map.class);			
-			result = (String) response.get(Constants.CANONICAL_URI);
+			result = (String) response.get(Constants.CANONICAL_LANGUAGE_URI);
 			
 		} catch (RestClientException e) {
 			logger.error("Error creating property {} cause: {} ", fieldName, e.getMessage());

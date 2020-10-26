@@ -69,4 +69,17 @@ public class TrellisUtils {
         //https://www.trellisldp.org/docs/trellis/current/apidocs/org/trellisldp/http/core/Slug.html
 	    return id.split("#")[0].split("\\?")[0].trim().replaceAll("[\\s/]+", "_");
 	}
+	
+	/**
+	 * Removes the last word from uri.
+	 *
+	 * @param url the url
+	 * @return the string
+	 */
+	public static String removeLastWordFromUri(String url) {
+		String[] entries = url.split("/");
+		String lastWord = entries[entries.length - 1]; 
+		String result = url.substring(0, url.length() - lastWord.length());
+		return result;
+	}
 }
