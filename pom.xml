@@ -150,6 +150,7 @@
 		<module>triples-storage-adapter-service-abstractions</module>
 		<module>triples-storage-adapter-swagger</module>
 		<module>triples-storage-adapter-test</module>
+		<module>triples-storage-adapter-delta</module>
 	</modules>
 	
 	<build>
