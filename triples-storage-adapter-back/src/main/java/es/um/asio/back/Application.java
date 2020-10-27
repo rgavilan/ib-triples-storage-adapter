@@ -6,11 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
+import es.um.asio.delta.DeltaConfig;
 import es.um.asio.service.ServiceConfig;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@Import({ ServiceConfig.class })
+@Import({ ServiceConfig.class, DeltaConfig.class  })
 @ComponentScan
 public class Application {
     /**

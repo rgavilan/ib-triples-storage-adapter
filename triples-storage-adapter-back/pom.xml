@@ -19,6 +19,9 @@
 	<properties>
 		<artifact.packaging>war</artifact.packaging>
 		<asio-abstractions.version>1.0-SNAPSHOT</asio-abstractions.version>
+		<triples-storage-adapter-service.version>1.0-SNAPSHOT</triples-storage-adapter-service.version>
+		<triples-storage-adapter-swagger.version>1.0-SNAPSHOT</triples-storage-adapter-swagger.version>
+		<triples-storage-adapter-delta.version>1.0-SNAPSHOT</triples-storage-adapter-delta.version>
 	</properties>
 
 	<dependencies>
@@ -27,13 +30,13 @@
 		<dependency>
 			<groupId>es.um.asio</groupId>
 			<artifactId>triples-storage-adapter-service</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>${triples-storage-adapter-service.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>es.um.asio</groupId>
 			<artifactId>triples-storage-adapter-swagger</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>${triples-storage-adapter-swagger.version}</version>
 		</dependency>
 
 		<dependency>
@@ -41,6 +44,13 @@
 			<artifactId>asio-abstractions</artifactId>
 			<version>${asio-abstractions.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>es.um.asio</groupId>
+			<artifactId>triples-storage-adapter-delta</artifactId>
+			<version>${triples-storage-adapter-delta.version}</version>
+		</dependency>
+		<!-- end UM ASIO - dependencies -->
 
 		<dependency>
 			<groupId>de.siegmar</groupId>
