@@ -6,10 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
+
 public class AddPropertyOperator extends Operator {
 	private String property;
 	private DeltaType type;
