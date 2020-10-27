@@ -25,6 +25,9 @@ public class DeltaController {
 	@GetMapping(value = "/{currentVersion}/{targetVersion}")
 	public void run(@PathVariable("currentVersion") final String currentVersion,@PathVariable("targetVersion") final String targetVersion) {
 		logger.info("Running DeltaController [currentVersion={} , targetVersion={}]", currentVersion, targetVersion);
+		
+		// we trigger the whole delta process
+		deltaProxy.process(currentVersion, targetVersion);
 	}
 	
 	/**

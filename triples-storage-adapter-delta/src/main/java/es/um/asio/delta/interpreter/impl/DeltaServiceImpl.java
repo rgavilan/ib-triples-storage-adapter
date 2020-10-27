@@ -1,4 +1,4 @@
-package es.um.asio.delta.service.interpreter.impl;
+package es.um.asio.delta.interpreter.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import es.um.asio.abstractions.domain.ManagementBusEvent;
-import es.um.asio.delta.service.interpreter.DeltaService;
+import es.um.asio.delta.interpreter.DeltaService;
 
 /**
  * Triples service implementation for Trellis.

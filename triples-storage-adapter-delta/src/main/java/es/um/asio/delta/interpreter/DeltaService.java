@@ -1,4 +1,4 @@
-package es.um.asio.delta.service.interpreter;
+package es.um.asio.delta.interpreter;
 
 import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.delta.exception.TripleStoreException;
