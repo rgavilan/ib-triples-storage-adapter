@@ -68,7 +68,7 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
 			result = getObjectFromTellis(localStorageUri);
 
 		} catch (Exception e) {
-			logger.error("Error retrieving class and id properties cause " + e.getMessage());
+			logger.error("Error retrieving class and id properties cause: {}", e.getMessage());
 			logger.error("createLinksEntry:", e);
 		}
 		return result;
@@ -112,9 +112,9 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
         if (postResponse.getStatusCode() != HttpStatus.SC_OK && postResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
             
             logger.error("Error updating links entry cause: " + postResponse.getBody().asString());
-            throw new RuntimeTrellisException("Error updating in Trellis the object: " + localUri);
+            throw new RuntimeTrellisException("Error updating in Trellis the object:".concat(localUri));
         } else {
-            logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: " + localUri);
+            logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: {}", localUri);
         }        
     }
 }

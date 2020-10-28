@@ -127,7 +127,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
             template.replace(itemToSave);            
         }
         
-        logger.info("GRAYLOG-TS Creado recurso en wikibase de tipo: " + message.getClassName());
+        logger.info("GRAYLOG-TS Creado recurso en wikibase de tipo: {}",message.getClassName());
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	 */
     private org.wikidata.wdtk.datamodel.interfaces.Statement convertToWikiStatement(Statement statement, ItemIdValue itemId) throws TripleStoreException {
 	   
-        if(IsReferenceToAnotherEntity(statement)) {
+        if(isReferenceToAnotherEntity(statement)) {
             
             String resource = statement.getResource().getURI();
             if(StringUtils.isEmpty(resource)) {
@@ -177,7 +177,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
                     .build();
         }
         
-        else if(IsTextProperty(statement)) {
+        else if(isTextProperty(statement)) {
             
             PropertyDocument propertyDocument = getOrCreateProperty(statement.getPredicate(), DatatypeIdValue.DT_STRING);
             if(propertyDocument == null) {
@@ -204,7 +204,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
      * @param statement the statement
      * @return true, if successful
      */
-    private boolean IsReferenceToAnotherEntity(Statement statement) {
+    private boolean isReferenceToAnotherEntity(Statement statement) {
         return statement.getObject().isResource();
     }
 	
@@ -214,7 +214,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
      * @param statement the statement
      * @return true, if successful
      */
-    private boolean IsTextProperty(Statement statement) {
+    private boolean isTextProperty(Statement statement) {
         return statement.getObject().isLiteral();
     }
 	

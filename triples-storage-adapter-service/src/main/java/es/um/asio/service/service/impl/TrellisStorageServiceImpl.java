@@ -152,7 +152,8 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			Model model = trellisLinkOperations.createLinksEntry(objectIdParent, classNameParent);
 			
 			
-			String className, fieldName;
+			String className = null;
+			String fieldName = null;
 			ArrayList<String> ids;
 			LinkedHashMap<String, Object> item;
 			
@@ -190,7 +191,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			trellisLinkOperations.updateLinksEntry(model, localUri);
 			
 		} catch (Exception e) {
-			this.logger.error("Error saving links cause " + e.getMessage());
+			this.logger.error("Error saving links cause: {}", e.getMessage());
 			this.logger.error("saveLinks", e);
 		}
 	}

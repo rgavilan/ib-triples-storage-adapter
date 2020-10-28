@@ -79,7 +79,6 @@ public class DeltaUtils {
 	public static String removeLastWordFromUri(String url) {
 		String[] entries = url.split("/");
 		String lastWord = entries[entries.length - 1]; 
-		String result = url.substring(0, url.length() - lastWord.length());
-		return result;
+		return url.substring(0, url.length() - lastWord.length());
 	}
 }

@@ -1,7 +1,5 @@
 package es.um.asio.service.trellis;
 
-import org.apache.jena.rdf.model.Model;
-
 import es.um.asio.abstractions.domain.ManagementBusEvent;
 
 /**

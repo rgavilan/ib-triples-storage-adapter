@@ -32,7 +32,7 @@ public class TrellisCommonOperationsImpl implements TrellisCommonOperations {
      */
     public RequestSpecification createRequestSpecification() {
         RequestSpecification requestSpecification = RestAssured.given();
-        if(authenticationEnabled) {
+        if(Boolean.TRUE.equals(authenticationEnabled)) {
             requestSpecification.header("Authorization", "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes()));
         }
         return requestSpecification;

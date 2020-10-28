@@ -122,9 +122,9 @@ public class TrellisOperationsImpl implements TrellisOperations {
                     .post(trellisUrlEndPoint);
             
             if (postResponse.getStatusCode() != HttpStatus.SC_CREATED) {
-                logger.warn("The container already exists: " + postResponse.getStatusCode());
+                logger.warn("The container already exists: {}", postResponse.getStatusCode());
             } else {
-                logger.info("GRAYLOG-TS Creado contenedor de tipo: " + message.getClassName());
+                logger.info("GRAYLOG-TS Creado contenedor de tipo: {}", message.getClassName());
             }
         } catch (Exception e) {
             logger.error("createContainer:" , e);
@@ -158,13 +158,13 @@ public class TrellisOperationsImpl implements TrellisOperations {
                 .body(model, new RdfObjectMapper()).post(urlContainer);
         
         if (postResponse.getStatusCode() != HttpStatus.SC_CREATED) {
-            logger.warn("Warn: saving the object: " + message.getModel());
-            logger.warn("Operation: " + message.getOperation());
-            logger.warn("cause: " + postResponse.getBody().asString());
-            logger.warn("Warn: saving in Trellis the object: " + message.getModel());
+            logger.warn("Warn: saving the object: {}", message.getModel());
+            logger.warn("Operation: {}", message.getOperation());
+            logger.warn("cause: {}", postResponse.getBody().asString());
+            logger.warn("Warn: saving in Trellis the object: {}",message.getModel());
 
         } else {
-            logger.info("GRAYLOG-TS Creado recurso en trellis de tipo: " + message.getClassName());
+            logger.info("GRAYLOG-TS Creado recurso en trellis de tipo: {}", message.getClassName());
         }
         
     }
@@ -188,9 +188,9 @@ public class TrellisOperationsImpl implements TrellisOperations {
             logger.error("Error updating the object: " + message.getModel());
             logger.error("Operation: " + message.getOperation());
             logger.error("cause: " + postResponse.getBody().asString());
-            throw new RuntimeTrellisException("Error updating in Trellis the object: " + message.getModel());
+            throw new RuntimeTrellisException("Error updating in Trellis the object: ".concat(message.getModel()));
         } else {
-            logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: " + message.getClassName());
+            logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: {}",message.getClassName());
         }        
     }
 
@@ -210,9 +210,9 @@ public class TrellisOperationsImpl implements TrellisOperations {
             logger.error("Error deleting the object: {} - {}", message.getClassName(), message.getIdModel());
             logger.error("Operation: " + message.getOperation());
             logger.error("cause: " + deleteResponse.getBody().asString());
-            throw new RuntimeTrellisException("Error deleting in Trellis the object: " + message.getClassName() + " - " + message.getIdModel());
+            throw new RuntimeTrellisException("Error deleting in Trellis the object: ".concat(message.getClassName()).concat(" - ").concat(message.getIdModel()));
         } else {
-            logger.info("GRAYLOG-TS Eliminado recurso en trellis de tipo: " + message.getClassName());
+            logger.info("GRAYLOG-TS Eliminado recurso en trellis de tipo: {}", message.getClassName());
         }        
     }
     
