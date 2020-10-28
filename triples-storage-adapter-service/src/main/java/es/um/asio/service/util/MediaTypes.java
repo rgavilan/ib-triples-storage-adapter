@@ -1,6 +1,6 @@
 package es.um.asio.service.util;
 
-public interface MediaTypes {
+public final class MediaTypes {
 
 	public static final String TEXT_TURTLE = "text/turtle";
 	public static final String APPLICATION_RDF_XML = "application/rdf+xml";

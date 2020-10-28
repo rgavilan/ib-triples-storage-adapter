@@ -77,7 +77,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
     public boolean existsContainer(ManagementBusEvent message) {
         boolean result = false;
         
-        String urlContainer =  trellisUrlEndPoint + "/" + message.getClassName();
+        String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName());
         Model model;
         try {
             model = trellisCommonOperations.createRequestSpecification()
@@ -110,7 +110,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
         
         resourceProperties.addProperty(a, "Container");
         resourceProperties.addProperty(a, "BasicContainer");
-        resourceProperties.addProperty(dcterms, message.getClassName() + " Container");
+        resourceProperties.addProperty(dcterms, message.getClassName().concat(" Container"));
         
         Response postResponse;
         try {
@@ -141,11 +141,11 @@ public class TrellisOperationsImpl implements TrellisOperations {
     @Override
     public void createEntry(ManagementBusEvent message) {
         Model model = trellisUtils.toObject(message.getModel());
-        String urlContainer =  trellisUrlEndPoint + "/" + message.getClassName();
+        String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName());
         
         // we only retrieve the id 
         String id = message.getIdModel().split("/")[message.getIdModel().split("/").length - 1];
-        String factoryUriNotification = urlContainer + "/" + id;
+        String factoryUriNotification = urlContainer.concat("/").concat(id);
         
         // we call to uri factory to notify the insertion
         logger.info("FactoryUriNotification: canonicalUri {}, localUri {}", message.getIdModel(), factoryUriNotification);
@@ -185,9 +185,9 @@ public class TrellisOperationsImpl implements TrellisOperations {
                 .body(model, new RdfObjectMapper()).put(urlContainer);
         
         if (postResponse.getStatusCode() != HttpStatus.SC_OK && postResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
-            logger.error("Error updating the object: " + message.getModel());
-            logger.error("Operation: " + message.getOperation());
-            logger.error("cause: " + postResponse.getBody().asString());
+            logger.error("Error updating the object: {}",message.getModel());
+            logger.error("Operation: {}", message.getOperation());
+            logger.error("cause: {}",postResponse.getBody().asString());
             throw new RuntimeTrellisException("Error updating in Trellis the object: ".concat(message.getModel()));
         } else {
             logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: {}",message.getClassName());
@@ -208,8 +208,8 @@ public class TrellisOperationsImpl implements TrellisOperations {
        
         if (deleteResponse.getStatusCode() != HttpStatus.SC_OK && deleteResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
             logger.error("Error deleting the object: {} - {}", message.getClassName(), message.getIdModel());
-            logger.error("Operation: " + message.getOperation());
-            logger.error("cause: " + deleteResponse.getBody().asString());
+            logger.error("Operation: {}", message.getOperation());
+            logger.error("cause: {}", deleteResponse.getBody().asString());
             throw new RuntimeTrellisException("Error deleting in Trellis the object: ".concat(message.getClassName()).concat(" - ").concat(message.getIdModel()));
         } else {
             logger.info("GRAYLOG-TS Eliminado recurso en trellis de tipo: {}", message.getClassName());

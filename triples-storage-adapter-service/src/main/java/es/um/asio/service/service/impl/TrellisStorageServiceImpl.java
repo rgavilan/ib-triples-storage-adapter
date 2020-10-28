@@ -158,10 +158,10 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			LinkedHashMap<String, Object> item;
 			
 			LinkedHashMap<String, Object> params = (LinkedHashMap<String, Object>) message.getLinkedModel();
-			ArrayList objetsToLink = (ArrayList) params.get(Constants.LINKED_TO);
+			ArrayList<LinkedHashMap<String, Object>> objetsToLink = (ArrayList) params.get(Constants.LINKED_TO);
 			
 			for (int i = 0; i < objetsToLink.size(); i++) {
-				item = (LinkedHashMap<String, Object>) objetsToLink.get(i);
+				item = objetsToLink.get(i);
 				
 				className = (String) PropertyUtils.getProperty(item, "className");
 				fieldName = (String) PropertyUtils.getProperty(item, "fieldName");

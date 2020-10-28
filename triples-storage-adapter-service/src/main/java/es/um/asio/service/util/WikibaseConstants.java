@@ -1,6 +1,11 @@
 package es.um.asio.service.util;
 
-public class WikibaseConstants {
+public final class WikibaseConstants {
+	
+	private WikibaseConstants() {
+		 throw new IllegalStateException("Utility class");
+	}
+	
     public static final String LABEL_ES = "Label_es";
     public static final String LABEL_EN = "Label_en";
     public static final String DESCRIPTION_ES = "Description_es";
