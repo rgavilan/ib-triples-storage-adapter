@@ -13,13 +13,13 @@ import org.springframework.boot.test.mock.mockito.MockReset;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.wikidata.wdtk.datamodel.implementation.MonolingualTextValueImpl;
+
 import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.abstractions.domain.Operation;
 import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.service.TriplesStorageService;
 import es.um.asio.service.service.impl.WikibaseStorageServiceImpl;
 import es.um.asio.service.util.TrellisUtils;
-import es.um.asio.service.util.WikibaseConstants;
 import es.um.asio.service.util.WikibaseUtils;
 import es.um.asio.service.wikibase.WikibaseOperations;
 
@@ -95,7 +95,7 @@ public class WikibaseStorageServiceTest {
     private ManagementBusEvent givenAManagementBusEvent(Operation operation) {
         ManagementBusEvent managementBusEvent = new ManagementBusEvent();
         managementBusEvent.setOperation(operation);
-        managementBusEvent.setClassName(WikibaseConstants.ALLOWED_TYPE_DATA[0]);
+        managementBusEvent.setClassName("Universidad");
         return managementBusEvent;
     }
     

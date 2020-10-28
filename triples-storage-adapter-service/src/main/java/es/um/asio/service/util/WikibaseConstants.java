@@ -16,7 +16,5 @@ public final class WikibaseConstants {
     public static final String ITEM_SEPARATOR = ":";
     public static final String LANGUAGE_ES = "es";
     public static final String LANGUAGE_EN = "en";
-    public static final String[] ALLOWED_TYPE_DATA = {"Universidad", "GrupoInvestigacion", "Proyecto"}; 
-
-    
+        
 }

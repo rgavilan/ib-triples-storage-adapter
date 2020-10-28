@@ -111,7 +111,7 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
         
         if (postResponse.getStatusCode() != HttpStatus.SC_OK && postResponse.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
             
-            logger.error("Error updating links entry cause: " + postResponse.getBody().asString());
+            logger.error("Error updating links entry cause: {}", postResponse.getBody().asString());
             throw new RuntimeTrellisException("Error updating in Trellis the object:".concat(localUri));
         } else {
             logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: {}", localUri);

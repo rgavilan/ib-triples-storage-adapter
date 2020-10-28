@@ -27,7 +27,6 @@ import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.service.TriplesStorageService;
 import es.um.asio.service.util.TrellisUtils;
-import es.um.asio.service.util.WikibaseConstants;
 import es.um.asio.service.util.WikibaseUtils;
 import es.um.asio.service.wikibase.WikibaseOperations;
 
@@ -36,6 +35,8 @@ import es.um.asio.service.wikibase.WikibaseOperations;
 public class WikibaseStorageServiceImpl implements TriplesStorageService {
 
 	private final Logger logger = LoggerFactory.getLogger(WikibaseStorageServiceImpl.class);
+	
+	private static final String[] ALLOWED_TYPE_DATA = {"Universidad", "GrupoInvestigacion", "Proyecto"}; 
 	
     /** 
      * The trellis utils.
@@ -87,7 +88,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	 */
 	private boolean checkNotAllowedDataPolicy(ManagementBusEvent message) {
 		boolean result = false;
-		result = Arrays.asList(WikibaseConstants.ALLOWED_TYPE_DATA).stream().anyMatch(s->message.getClassName().equalsIgnoreCase(s));
+		result = Arrays.asList(WikibaseStorageServiceImpl.ALLOWED_TYPE_DATA).stream().anyMatch(s->message.getClassName().equalsIgnoreCase(s));
 		return !result;
 	}
 
