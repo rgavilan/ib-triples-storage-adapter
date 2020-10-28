@@ -69,7 +69,7 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
 
 		} catch (Exception e) {
 			logger.error("Error retrieving class and id properties cause " + e.getMessage());
-			e.printStackTrace();
+			logger.error("createLinksEntry:", e);
 		}
 		return result;
 	}
@@ -89,7 +89,7 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
 			result = trellisUtils.toObject(strModel, RDFLanguages.TURTLE);					
 		} catch (Exception e) {
 			this.logger.error("Invalid URI {}", localStorageUri);
-			e.printStackTrace();
+			logger.error("getObjectFromTellis:", e);
 		}
 		
 		return result;

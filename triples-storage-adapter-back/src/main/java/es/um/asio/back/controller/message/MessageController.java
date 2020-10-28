@@ -34,7 +34,7 @@ private final Logger logger = LoggerFactory.getLogger(MessageController.class);
 			this.proxy.process(message);
 		} catch (Exception e) {
 			logger.error("Error processing message: " + message.toString() + " cause: " + e.getMessage());
-			e.printStackTrace();
+			logger.error("processMessage: ",e);
 		}        
     }
 

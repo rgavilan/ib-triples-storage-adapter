@@ -24,6 +24,7 @@ public class RenamePropertyInterpreterImpl implements RenamePropertyInterpreter 
 			updatePropertyInterpreter.run(operator);
 		} else {
 			logger.info("Executing: {} ", operator);
+			updatePropertyInterpreter.run(operator);
 		}
 	}
 

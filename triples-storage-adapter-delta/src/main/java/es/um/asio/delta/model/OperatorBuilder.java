@@ -44,7 +44,7 @@ public class OperatorBuilder {
 			}
 	    } catch (Exception e) {
 	    	logger.error("Error reading instruction: {} cause: {}", instruction, e.getMessage());
-	        e.printStackTrace();
+	    	logger.error("build: ",e);
 	    }   
 		
 		return result;

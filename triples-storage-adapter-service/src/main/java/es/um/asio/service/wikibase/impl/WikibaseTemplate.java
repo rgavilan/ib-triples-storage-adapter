@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ import es.um.asio.service.wikibase.WikibaseOperations;
 @Service(value = "WikibaseTemplate")
 public class WikibaseTemplate implements WikibaseOperations {
     
+	
+	private final Logger logger = LoggerFactory.getLogger(WikibaseTemplate.class);
+	
     /**
      * Wikibase connection manager.
      */
@@ -132,7 +137,7 @@ public class WikibaseTemplate implements WikibaseOperations {
         try {
             newProperty = this.dataEditor.createPropertyDocument(propertyDocument, "Create new property", Collections.emptyList());
         } catch (IOException | MediaWikiApiErrorException e) {
-            //e.printStackTrace();
+            this.logger.error("getOrCreateProperty: ", e);
         }
         
         //2. search the property 

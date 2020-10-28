@@ -191,7 +191,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			
 		} catch (Exception e) {
 			this.logger.error("Error saving links cause " + e.getMessage());
-			e.printStackTrace();
+			this.logger.error("saveLinks", e);
 		}
 	}
 }

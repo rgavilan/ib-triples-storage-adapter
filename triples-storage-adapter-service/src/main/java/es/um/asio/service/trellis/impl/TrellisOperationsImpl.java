@@ -127,8 +127,8 @@ public class TrellisOperationsImpl implements TrellisOperations {
                 logger.info("GRAYLOG-TS Creado contenedor de tipo: " + message.getClassName());
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
-            e.printStackTrace();
+            logger.error("createContainer:" , e);
+            
         }
         
     }

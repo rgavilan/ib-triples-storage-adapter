@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.jena.atlas.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +96,7 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 			result = (String) ((LinkedHashMap<String, Object>) urisMap.get(0)).get(typeURI);
 		} catch (RestClientException e) {
 			logger.error("Error retrieving getUriByResource(id={}, class={}) ", id, className);
-			e.printStackTrace();
+			logger.error("getUriByResource", e);
 		}
 
 		logger.info("LocalStorageUri(id={}, className={}) = {}", id, className, result);
@@ -131,7 +130,7 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 			
 		} catch (RestClientException e) {
 			logger.error("Error creating property {} cause: {} ", fieldName, e.getMessage());
-			e.printStackTrace();
+			logger.error("createProperty", e);
 		}
 		
 		return result;
