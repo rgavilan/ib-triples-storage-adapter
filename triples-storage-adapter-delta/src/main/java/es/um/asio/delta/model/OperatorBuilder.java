@@ -8,7 +8,8 @@ import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import es.um.asio.delta.model.operator.AddPropertyOperator;
+import es.um.asio.delta.model.operator.UpdatePropertyOperator;
+import es.um.asio.delta.model.operator.RenamePropertyOperator;
 
 @Component
 public class OperatorBuilder {
@@ -20,7 +21,8 @@ public class OperatorBuilder {
 	public OperatorBuilder() {
 		super();
 		mapper = new ObjectMapper();
-		// if not you have "No content to map due to end-of-input"
+		
+		// this configuration is used to "No content to map due to end-of-input" error
 		mapper.configure(Feature.AUTO_CLOSE_SOURCE, true);
 	}
 
@@ -29,8 +31,11 @@ public class OperatorBuilder {
 		
 		try {
 			switch (instruction.get("action").asText(DeltaActions.UNKNOWN)) {
-			case DeltaActions.ADD_PROPERTY:
-				result = mapper.readValue(instruction.toString(), AddPropertyOperator .class);				
+			case DeltaActions.RENAME_PROPERTY: 
+				result = mapper.readValue(instruction.toString(), RenamePropertyOperator .class);				
+				break;
+			case DeltaActions.UPDATE_PROPERTY:  
+				result = mapper.readValue(instruction.toString(), UpdatePropertyOperator .class);				
 				break;
 			// this should be in the last position
 			case DeltaActions.UNKNOWN:

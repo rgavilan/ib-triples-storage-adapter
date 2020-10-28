@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import es.um.asio.delta.interpreter.AddPropertyInterpreter;
+import es.um.asio.delta.interpreter.RenamePropertyInterpreter;
 import es.um.asio.delta.model.OperatorBuilder;
 
 @Service
@@ -20,7 +20,7 @@ public class DeltaProcessorImpl implements DeltaProcessor {
 	private OperatorBuilder operatorBuilder;
 
 	@Autowired
-	private AddPropertyInterpreter addPropertyInterpreter;
+	private RenamePropertyInterpreter renamePropertyInterpreter;
 
 	@Override
 	public void process(ArrayNode instructions) {
@@ -32,7 +32,7 @@ public class DeltaProcessorImpl implements DeltaProcessor {
 	}
 
 	private void run(JsonNode instruction) {
-		addPropertyInterpreter.run(operatorBuilder.build(instruction));
+		renamePropertyInterpreter.run(operatorBuilder.build(instruction));
 	}
 
 }
