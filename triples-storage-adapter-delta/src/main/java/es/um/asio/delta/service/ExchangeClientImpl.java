@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,12 @@ public class ExchangeClientImpl implements ExchangeClient {
 
 	
 	private final Logger logger = LoggerFactory.getLogger(ExchangeClientImpl.class);
+	
+	
+	/** The file path instructions. */
+	@Value("${app.delta.mockup-file-path}")
+	private String filePathInstructions;
+	
 	
 	@Override
 	public ArrayNode retrieveDeltaFile(String currentVersion, String targetVersion) {
@@ -27,7 +34,7 @@ public class ExchangeClientImpl implements ExchangeClient {
 		ObjectMapper mapper = new ObjectMapper();
 		
 	    try {
-	        result = mapper.readValue(new File("C:\\tmp\\input.json"), ArrayNode .class);
+	        result = mapper.readValue(new File(filePathInstructions), ArrayNode .class);
 	    } catch (Exception e) {
 	        logger.error("mockup", e);
 	    }   

@@ -1,5 +1,6 @@
 package es.um.asio.delta.processor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class DeltaProcessorImpl implements DeltaProcessor {
 
 	@Override
 	public void process(ArrayNode instructions) {
-		if (instructions != null && instructions.size() > 0) {
+		if (instructions != null && instructions.size() > 0 && StringUtils.isNotEmpty(instructions.asText())) {
 			logger.info(instructions.asText());
 			instructions.forEach(this::run);
 		} else {

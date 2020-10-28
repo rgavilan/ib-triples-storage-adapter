@@ -42,6 +42,9 @@ app:
     endpoint-local-resource-storage-uri: ${app.generator-uris.endpoint}/uri-factory/local/resource
     endpoint-local-property-storage-uri: ${app.generator-uris.endpoint}/uri-factory/local/property
     endpoint-property: ${app.generator-uris.endpoint}/uri-factory/canonical/property
+  # delta  
+  delta:
+    mockup-file-path: C:\\tmp\\input.json
     
 ## Actuator
 management:
