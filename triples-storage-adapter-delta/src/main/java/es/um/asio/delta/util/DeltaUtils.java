@@ -57,28 +57,4 @@ public class DeltaUtils {
 		return result;
 	}
 	
-	
-	/**
-	 * Method to transform id to Trellis Resource id
-	 *
-	 * @param id the id
-	 * @return the string
-	 */
-	public String toResourceId(String id) {
-	    //According Trellis documentation, Any trailing hashURI values (#foo) are removed as are any query parameters (?bar). Spaces and slashes are converted to underscores.
-        //https://www.trellisldp.org/docs/trellis/current/apidocs/org/trellisldp/http/core/Slug.html
-	    return id.split("#")[0].split("\\?")[0].trim().replaceAll("[\\s/]+", "_");
-	}
-	
-	/**
-	 * Removes the last word from uri.
-	 *
-	 * @param url the url
-	 * @return the string
-	 */
-	public static String removeLastWordFromUri(String url) {
-		String[] entries = url.split("/");
-		String lastWord = entries[entries.length - 1]; 
-		return url.substring(0, url.length() - lastWord.length());
-	}
 }

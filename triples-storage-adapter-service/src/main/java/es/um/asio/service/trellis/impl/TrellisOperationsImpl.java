@@ -228,7 +228,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
     			.queryParam(TrellisOperationsImpl.LOCAL_URI, localURI)
     			.queryParam(TrellisOperationsImpl.STORAGE_NAME, TrellisOperationsImpl.TRELLIS);
     	
-    	Map<String, String> obj = new HashMap<String, String>();
+    	Map<String, String> obj = new HashMap<>();
     	obj.put(TrellisOperationsImpl.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI);
     	obj.put(TrellisOperationsImpl.LOCAL_URI, localURI);
     	obj.put(TrellisOperationsImpl.STORAGE_NAME, TrellisOperationsImpl.TRELLIS);

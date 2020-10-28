@@ -122,7 +122,7 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 					.queryParam(Constants.SUBDOMAIN, Constants.SUBDOMAIN_VALUE)
 					.queryParam(Constants.LANG, Constants.SPANISH_LANGUAGE);
 			
-			Map<String, String> obj = new HashMap<String, String>();
+			Map<String, String> obj = new HashMap<>();
 			obj.put("property", fieldName);	
 			
 			Map response = restUrisTemplate.postForObject(builder.toUriString(), obj, Map.class);			
