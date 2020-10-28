@@ -24,10 +24,11 @@ public class DeltaProcessorImpl implements DeltaProcessor {
 
 	@Override
 	public void process(ArrayNode instructions) {
-		logger.info(instructions.asText());
-
 		if (instructions != null && instructions.size() > 0) {
-			instructions.forEach(instruction -> run(instruction));
+			logger.info(instructions.asText());
+			instructions.forEach(this::run);
+		} else {
+			logger.warn("Empty instructions to run!!!");
 		}
 	}
 
