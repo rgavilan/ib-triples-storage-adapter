@@ -26,7 +26,7 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.service.TriplesStorageService;
-import es.um.asio.service.util.TrellisUtils;
+import es.um.asio.service.util.TriplesStorageUtils;
 import es.um.asio.service.util.WikibaseUtils;
 import es.um.asio.service.wikibase.WikibaseOperations;
 
@@ -38,11 +38,10 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	
 	private static final String[] ALLOWED_TYPE_DATA = {"Universidad", "GrupoInvestigacion", "Proyecto"}; 
 	
-    /** 
-     * The trellis utils.
-    */
+    
+    /** The triples storage utils. */
     @Autowired
-    private TrellisUtils trellisUtils;
+    private TriplesStorageUtils triplesStorageUtils;
     
     /** 
      * The wikibase utils. 
@@ -103,7 +102,7 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	void save(ManagementBusEvent message) throws TripleStoreException {
 	    logger.info("Saving object in Wikibase: {} - {}", message.getClassName(), message.getIdModel());
 
-		Model model = trellisUtils.toObject(message.getModel());
+		Model model = triplesStorageUtils.toObject(message.getModel());
         List<Statement> statements =  model.listStatements().toList();
         String modelId = statements.get(0).getSubject().getURI();
         if(StringUtils.isEmpty(modelId)) {

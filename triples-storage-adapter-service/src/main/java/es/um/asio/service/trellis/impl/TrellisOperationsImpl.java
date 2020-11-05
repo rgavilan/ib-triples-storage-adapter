@@ -1,8 +1,5 @@
 package es.um.asio.service.trellis.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.http.HttpStatus;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -15,17 +12,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.trellisldp.api.RuntimeTrellisException;
 
 import com.jayway.restassured.response.Response;
 
+import es.um.asio.abstractions.constants.Constants;
 import es.um.asio.abstractions.domain.ManagementBusEvent;
+import es.um.asio.service.service.uris.UrisFactoryClient;
 import es.um.asio.service.trellis.TrellisCommonOperations;
 import es.um.asio.service.trellis.TrellisOperations;
 import es.um.asio.service.util.MediaTypes;
 import es.um.asio.service.util.RdfObjectMapper;
-import es.um.asio.service.util.TrellisUtils;
+import es.um.asio.service.util.TriplesStorageUtils;
 
 @Service
 public class TrellisOperationsImpl implements TrellisOperations {
@@ -35,27 +33,18 @@ public class TrellisOperationsImpl implements TrellisOperations {
     
     /** The trellis utils. */
     @Autowired
-    private TrellisUtils trellisUtils;
+    private TriplesStorageUtils triplesStorageUtils;
     
     @Autowired
     private TrellisCommonOperations trellisCommonOperations;
+    
+    @Autowired
+    private UrisFactoryClient urisFactoryClient;
     
     /** The trellis url end point. */
     @Value("${app.trellis.endpoint}")
     private String trellisUrlEndPoint;
     
-    /** The uri factory endpoint. */
-    @Value("${app.generator-uris.endpoint-link-uri}")
-    private String uriFactoryEndpoint;
-    
-   
-
-    // Constants
-    private static final String TRELLIS = "trellis";
-	private static final String STORAGE_NAME = "storageName";
-	private static final String LOCAL_URI = "localURI";
-	private static final String CANONICAL_LANGUAGE_URI = "canonicalLanguageURI";
-
     
     /** Rest Template. */
     @Autowired
@@ -128,9 +117,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
             }
         } catch (Exception e) {
             logger.error("createContainer:" , e);
-            
         }
-        
     }
 
     /**
@@ -140,7 +127,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
      */
     @Override
     public void createEntry(ManagementBusEvent message) {
-        Model model = trellisUtils.toObject(message.getModel());
+        Model model = triplesStorageUtils.toObject(message.getModel());
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName());
         
         // we only retrieve the id 
@@ -149,7 +136,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
         
         // we call to uri factory to notify the insertion
         logger.info("FactoryUriNotification: canonicalUri {}, localUri {}", message.getIdModel(), factoryUriNotification);
-        this.eventNotifyUrisFactory(message.getIdModel(), factoryUriNotification);
+        this.urisFactoryClient.eventNotifyUrisFactory(message.getIdModel(), factoryUriNotification, Constants.TRELLIS);
         
         
         Response postResponse = trellisCommonOperations.createRequestSpecification()
@@ -166,7 +153,6 @@ public class TrellisOperationsImpl implements TrellisOperations {
         } else {
             logger.info("GRAYLOG-TS Creado recurso en trellis de tipo: {}", message.getClassName());
         }
-        
     }
 
     /**
@@ -176,10 +162,10 @@ public class TrellisOperationsImpl implements TrellisOperations {
      */
     @Override
     public void updateEntry(ManagementBusEvent message) {
-        String resourceID = trellisUtils.toResourceId(message.getIdModel());
+        String resourceID = triplesStorageUtils.toResourceId(message.getIdModel());
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
         
-        Model model = trellisUtils.toObject(message.getModel());        
+        Model model = triplesStorageUtils.toObject(message.getModel());        
         Response postResponse = trellisCommonOperations.createRequestSpecification()
                 .contentType(MediaTypes.TEXT_TURTLE)
                 .body(model, new RdfObjectMapper()).put(urlContainer);
@@ -201,7 +187,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
      */
     @Override
     public void deleteEntry(ManagementBusEvent message) {
-        String resourceID = trellisUtils.toResourceId(message.getIdModel());
+        String resourceID = triplesStorageUtils.toResourceId(message.getIdModel());
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
         
         Response deleteResponse = trellisCommonOperations.createRequestSpecification().delete(urlContainer);
@@ -215,26 +201,4 @@ public class TrellisOperationsImpl implements TrellisOperations {
             logger.info("GRAYLOG-TS Eliminado recurso en trellis de tipo: {}", message.getClassName());
         }        
     }
-    
-    /**
-     * Event notify uris factory.
-     *
-     * @param canonicalUri the canonical uri
-     * @param localUri the local uri
-     */
-    private void eventNotifyUrisFactory(String cannonicalLanguageURI, String localURI) {
-    	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uriFactoryEndpoint)
-    			.queryParam(TrellisOperationsImpl.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI)
-    			.queryParam(TrellisOperationsImpl.LOCAL_URI, localURI)
-    			.queryParam(TrellisOperationsImpl.STORAGE_NAME, TrellisOperationsImpl.TRELLIS);
-    	
-    	Map<String, String> obj = new HashMap<>();
-    	obj.put(TrellisOperationsImpl.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI);
-    	obj.put(TrellisOperationsImpl.LOCAL_URI, localURI);
-    	obj.put(TrellisOperationsImpl.STORAGE_NAME, TrellisOperationsImpl.TRELLIS);
-		
-    	Object response = restTemplate.postForObject(builder.toUriString(), obj, Object.class);
-    	this.logger.info(response.toString());
-    }
-
 }

@@ -13,7 +13,7 @@ app:
     
   # Trellis
   trellis:
-    enabled: true
+    enabled: false
     endpoint: http://localhost:80
     authentication:
       enabled: true
@@ -21,7 +21,7 @@ app:
       password: admin
   # Wikibase
   wikibase:
-    enabled: false
+    enabled: true
     api: 
       url: http://localhost:8181/api.php
       username: WikibaseAdmin

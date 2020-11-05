@@ -21,7 +21,7 @@ import es.um.asio.service.service.TriplesStorageService;
 import es.um.asio.service.service.uris.UrisFactoryClient;
 import es.um.asio.service.trellis.TrellisLinkOperations;
 import es.um.asio.service.trellis.TrellisOperations;
-import es.um.asio.service.util.TrellisUtils;
+import es.um.asio.service.util.TriplesStorageUtils;
 
 /**
  * Triples service implementation for Trellis.
@@ -172,7 +172,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 				Resource resource = model.getResource(canonicalURIFromParent);
 				
 				// we create the property in uri's factory
-				String canonicalURIProperty = TrellisUtils.removeLastWordFromUri(this.urisFactoryClient.createProperty(fieldName));				
+				String canonicalURIProperty = TriplesStorageUtils.removeLastWordFromUri(this.urisFactoryClient.createProperty(fieldName));				
 				
 				final Property property = model.createProperty(canonicalURIProperty, fieldName);
 				

@@ -19,7 +19,7 @@ import es.um.asio.service.trellis.TrellisCommonOperations;
 import es.um.asio.service.trellis.TrellisLinkOperations;
 import es.um.asio.service.util.MediaTypes;
 import es.um.asio.service.util.RdfObjectMapper;
-import es.um.asio.service.util.TrellisUtils;
+import es.um.asio.service.util.TriplesStorageUtils;
 
 @Service
 public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
@@ -36,7 +36,7 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
 	
 	  /** The trellis utils. */
     @Autowired
-    private TrellisUtils trellisUtils;
+    private TriplesStorageUtils triplesStorageUtils;
     
     @Autowired
     private UrisFactoryClient urisFactoryClient;
@@ -86,7 +86,7 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
 		try {
 			Response response = trellisCommonOperations.createRequestSpecification().get(new URI(localStorageUri));
 			String strModel = response.getBody().asString();			
-			result = trellisUtils.toObject(strModel, RDFLanguages.TURTLE);					
+			result = triplesStorageUtils.toObject(strModel, RDFLanguages.TURTLE);					
 		} catch (Exception e) {
 			this.logger.error("Invalid URI {}", localStorageUri);
 			logger.error("getObjectFromTellis:", e);

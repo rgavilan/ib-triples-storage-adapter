@@ -7,4 +7,6 @@ public interface UrisFactoryClient {
 	String getCanonicalUriByResource(String id, String className);
 
 	String createProperty(String fieldName);
+	
+	void eventNotifyUrisFactory(String cannonicalLanguageURI, String localURI, String triplesStoreTarget);
 }

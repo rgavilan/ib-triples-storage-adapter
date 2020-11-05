@@ -19,7 +19,7 @@ import es.um.asio.abstractions.domain.Operation;
 import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.service.TriplesStorageService;
 import es.um.asio.service.service.impl.WikibaseStorageServiceImpl;
-import es.um.asio.service.util.TrellisUtils;
+import es.um.asio.service.util.TriplesStorageUtils;
 import es.um.asio.service.util.WikibaseUtils;
 import es.um.asio.service.wikibase.WikibaseOperations;
 
@@ -33,9 +33,9 @@ public class WikibaseStorageServiceTest {
             return new WikibaseStorageServiceImpl();
         }
         @Bean
-        public TrellisUtils trellisUtils()
+        public TriplesStorageUtils triplesStorageUtils()
         {
-            return new TrellisUtils();
+            return new TriplesStorageUtils();
         }
         
     }

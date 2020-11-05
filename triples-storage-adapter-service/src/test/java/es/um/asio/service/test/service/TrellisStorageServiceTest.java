@@ -20,7 +20,7 @@ import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.service.TriplesStorageService;
 import es.um.asio.service.service.impl.TrellisStorageServiceImpl;
 import es.um.asio.service.trellis.TrellisOperations;
-import es.um.asio.service.util.TrellisUtils;
+import es.um.asio.service.util.TriplesStorageUtils;
 
 
 @RunWith(SpringRunner.class)
@@ -33,9 +33,9 @@ public class TrellisStorageServiceTest {
             return new TrellisStorageServiceImpl();
         }
         @Bean
-        public TrellisUtils trellisUtils()
+        public TriplesStorageUtils triplesStorageUtils()
         {
-            return new TrellisUtils();
+            return new TriplesStorageUtils();
         }
     }
     

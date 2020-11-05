@@ -40,6 +40,10 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	@Value("${app.generator-uris.endpoint-property}")
 	private String uriProperty;
 	
+    /** The uri factory endpoint. */
+    @Value("${app.generator-uris.endpoint-link-uri}")
+    private String uriFactoryEndpoint;
+	
 	/** Rest Template. */
 	@Autowired
 	private RestTemplate restUrisTemplate;
@@ -135,4 +139,25 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 		
 		return result;
 	}
+	
+	 /**
+     * Event notify uris factory.
+     *
+     * @param canonicalUri the canonical uri
+     * @param localUri the local uri
+     */
+    public void eventNotifyUrisFactory(String cannonicalLanguageURI, String localURI, String triplesStoreTarget) {
+    	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uriFactoryEndpoint)
+    			.queryParam(Constants.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI)
+    			.queryParam(Constants.LOCAL_URI, localURI)
+    			.queryParam(Constants.STORAGE_NAME, triplesStoreTarget);
+    	
+    	Map<String, String> obj = new HashMap<>();
+    	obj.put(Constants.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI);
+    	obj.put(Constants.LOCAL_URI, localURI);
+    	obj.put(Constants.STORAGE_NAME, triplesStoreTarget);
+		
+    	Object response = restUrisTemplate.postForObject(builder.toUriString(), obj, Object.class);
+    	this.logger.info(response.toString());
+    }
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.apache.jena.riot.Lang;
 
 @Component
-public class TrellisUtils {
+public class TriplesStorageUtils {
 	/**
 	 * To object.
 	 *
