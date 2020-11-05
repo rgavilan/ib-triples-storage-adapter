@@ -8,5 +8,5 @@ public interface UrisFactoryClient {
 
 	String createProperty(String fieldName);
 	
-	void eventNotifyUrisFactory(String cannonicalLanguageURI, String localURI, String triplesStoreTarget);
+	void eventNotifyUrisFactory(String canonicalLanguageURI, String localURI, String triplesStoreTarget);
 }

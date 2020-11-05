@@ -9,9 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.trellisldp.api.RuntimeTrellisException;
 
 import com.jayway.restassured.response.Response;
@@ -46,16 +44,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
     private String trellisUrlEndPoint;
     
     
-    /** Rest Template. */
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-  
-    
+   
     /**
      * Exists container.
      *

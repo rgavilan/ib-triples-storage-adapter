@@ -23,9 +23,11 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
+import es.um.asio.abstractions.constants.Constants;
 import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.service.TriplesStorageService;
+import es.um.asio.service.service.uris.UrisFactoryClient;
 import es.um.asio.service.util.TriplesStorageUtils;
 import es.um.asio.service.util.WikibaseUtils;
 import es.um.asio.service.wikibase.WikibaseOperations;
@@ -54,6 +56,10 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
      */
     @Autowired
     private WikibaseOperations template;
+    
+    /** The uris factory client. */
+    @Autowired
+    private UrisFactoryClient urisFactoryClient;
 
 	@Override
 	public void process(ManagementBusEvent message) throws TripleStoreException {
@@ -102,7 +108,9 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 	void save(ManagementBusEvent message) throws TripleStoreException {
 	    logger.info("Saving object in Wikibase: {} - {}", message.getClassName(), message.getIdModel());
 
+	    // we retrieve the model
 		Model model = triplesStorageUtils.toObject(message.getModel());
+		
         List<Statement> statements =  model.listStatements().toList();
         String modelId = statements.get(0).getSubject().getURI();
         if(StringUtils.isEmpty(modelId)) {
@@ -121,11 +129,18 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
         }
      	        
         ItemDocument itemToSave = itemDocumentBuilder.build();
+        ItemDocument savedItem = null;
         if(itemToSave.getEntityId().equals(ItemIdValue.NULL)) {
-            template.insert(itemToSave);
+        	savedItem = template.insert(itemToSave);
         } else {
-            template.replace(itemToSave);            
+        	savedItem = template.replace(itemToSave);            
         }
+        
+        // factory uri notification
+        String canonicalLanguageURI = modelId;
+        String localURI = savedItem.getEntityId().getIri();        
+        logger.info("FactoryUriNotification: canonicalUri {}, localUri {}", canonicalLanguageURI, localURI);
+        this.urisFactoryClient.eventNotifyUrisFactory(canonicalLanguageURI, localURI, Constants.WIKIBASE);
         
         logger.info("GRAYLOG-TS Creado recurso en wikibase de tipo: {}",message.getClassName());
 	}
