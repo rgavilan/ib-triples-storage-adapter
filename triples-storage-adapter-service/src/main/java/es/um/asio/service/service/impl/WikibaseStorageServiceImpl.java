@@ -78,12 +78,20 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
 				break;
 			case DELETE:
 				break;
+			case LINKED_INSERT:
+				this.saveLinks(message);
+				break;
 			default:
 				break;
 			}
 		}
 	}
 	
+	private void saveLinks(ManagementBusEvent message) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	/**
 	 * Check allowed data policy.
 	 * Allowed type of data:
@@ -137,12 +145,15 @@ public class WikibaseStorageServiceImpl implements TriplesStorageService {
         }
         
         // factory uri notification
-        String canonicalLanguageURI = modelId;
-        String localURI = savedItem.getEntityId().getIri();        
-        logger.info("FactoryUriNotification: canonicalUri {}, localUri {}", canonicalLanguageURI, localURI);
-        this.urisFactoryClient.eventNotifyUrisFactory(canonicalLanguageURI, localURI, Constants.WIKIBASE);
-        
-        logger.info("GRAYLOG-TS Creado recurso en wikibase de tipo: {}",message.getClassName());
+        if(savedItem != null && savedItem.getEntityId() != null) {
+        	String canonicalLanguageURI = modelId;
+        	String localURI = savedItem.getEntityId().getIri();        
+        	logger.info("FactoryUriNotification: canonicalUri {}, localUri {}", canonicalLanguageURI, localURI);
+        	this.urisFactoryClient.eventNotifyUrisFactory(canonicalLanguageURI, localURI, Constants.WIKIBASE);        	
+        	logger.info("GRAYLOG-TS Creado recurso en wikibase de tipo: {}",message.getClassName());
+        } else {
+        	logger.error("Error creating resource in Wikibase: {}",message);
+        }
 	}
 
 	/**
