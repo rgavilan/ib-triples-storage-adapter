@@ -62,7 +62,11 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	 * @return the local storage uri by resource
 	 */
 	public String getLocalStorageUriByResource(String id, String className) {
-		return this.getUriByResource(id, className, Constants.LOCAL_URI);
+		return this.getUriByResource(id, className, Constants.LOCAL_Uri, Constants.REFERENCE);
+	}
+	
+	public String getLocalStorageUriByEntityId(String entityId, String className) {
+		return this.getUriByResource(entityId, className, Constants.LOCAL_Uri, Constants.REFERENCE);
 	}
 	
 	/**
@@ -73,7 +77,7 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	 * @return the canonical uri by resource
 	 */
 	public String getCanonicalUriByResource(String id, String className) {
-		return this.getUriByResource(id, className, "canonicalURILanguageStr");
+		return this.getUriByResource(id, className, "canonicalURILanguageStr", Constants.REFERENCE);
 	}
 	
 	/**
@@ -82,9 +86,9 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	 * @param id the id
 	 * @param className the class name
 	 * @param typeURI the type URI
-	 * @return the uri by resource
+	 * @return the uri by resource 
 	 */
-	private String getUriByResource(String id, String className, String typeURI) {
+	private String getUriByResource(String id, String className, String typeURI, String typeId) {
 		String result = StringUtils.EMPTY;
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(localResourceStorageUri)
@@ -92,7 +96,7 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 					.queryParam(Constants.SUBDOMAIN, Constants.SUBDOMAIN_VALUE)
 					.queryParam(Constants.LANG, Constants.SPANISH_LANGUAGE)
 					.queryParam(Constants.TYPE_CODE, Constants.TYPE_REST).queryParam("entity", className)
-					.queryParam(Constants.REFERENCE, id)
+					.queryParam(typeId, id)
 					.queryParam(Constants.STORAGE_NAME, StorageType.TRELLIS.name().toLowerCase());
 
 			Map response = restUrisTemplate.getForObject(builder.toUriString(), Map.class);

@@ -2,6 +2,7 @@ package es.um.asio.service.trellis.impl;
 
 import java.net.URI;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFLanguages;
@@ -42,16 +43,6 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
     private UrisFactoryClient urisFactoryClient;
 
 	
-	/**
-	 * Gets the local storage uri.
-	 *
-	 * @param id        the id
-	 * @param className the class name
-	 * @return the local storage uri
-	 */
-	public String getLocalStorageUri(String id, String className) {
-		return urisFactoryClient.getLocalStorageUriByResource(id, className);		
-	}
 
 	/**
 	 * Creates the links entry.
@@ -64,9 +55,12 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
 		Model result = null;
 		
 		try {
-			String localStorageUri = this.getLocalStorageUri(objectId, className);
-			result = getObjectFromTellis(localStorageUri);
-
+			String localStorageUri = urisFactoryClient.getLocalStorageUriByEntityId(objectId, className);
+			if(!StringUtils.isBlank(localStorageUri)) {
+				result = getObjectFromTellis(localStorageUri);				
+			} else {
+				this.logger.error("Resource not found in Trellis with className: {} id: {}", className, objectId);
+			}
 		} catch (Exception e) {
 			logger.error("Error retrieving class and id properties cause: {}", e.getMessage());
 			logger.error("createLinksEntry:", e);

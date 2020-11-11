@@ -151,44 +151,47 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			final String classNameParent = (String) PropertyUtils.getProperty(obj, Constants.CLASS);
 			Model model = trellisLinkOperations.createLinksEntry(objectIdParent, classNameParent);
 			
-			
-			String className = null;
-			String fieldName = null;
-			ArrayList<String> ids;
-			LinkedHashMap<String, Object> item;
-			
-			LinkedHashMap<String, Object> params = (LinkedHashMap<String, Object>) message.getLinkedModel();
-			ArrayList<LinkedHashMap<String, Object>> objetsToLink = (ArrayList) params.get(Constants.LINKED_TO);
-			
-			for (int i = 0; i < objetsToLink.size(); i++) {
-				item = objetsToLink.get(i);
+			if(model != null) {
+				String className = null;
+				String fieldName = null;
+				ArrayList<String> ids;
+				LinkedHashMap<String, Object> item;
 				
-				className = (String) PropertyUtils.getProperty(item, "className");
-				fieldName = (String) PropertyUtils.getProperty(item, "fieldName");
-				ids = (ArrayList<String>) PropertyUtils.getProperty(item, "ids");
+				LinkedHashMap<String, Object> params = (LinkedHashMap<String, Object>) message.getLinkedModel();
+				ArrayList<LinkedHashMap<String, Object>> objetsToLink = (ArrayList) params.get(Constants.LINKED_TO);
 				
-				// we retrieve the canonical uri from parent
-				String canonicalURIFromParent = this.urisFactoryClient.getCanonicalUriByResource(objectIdParent, classNameParent);
-				Resource resource = model.getResource(canonicalURIFromParent);
-				
-				// we create the property in uri's factory
-				String canonicalURIProperty = TriplesStorageUtils.removeLastWordFromUri(this.urisFactoryClient.createProperty(fieldName));				
-				
-				final Property property = model.createProperty(canonicalURIProperty, fieldName);
-				
-				// we add the nodes
-				String canonicalURIFromSonObject;
-				for(int j=0; j < ids.size(); j++) {
+				for (int i = 0; i < objetsToLink.size(); i++) {
+					item = objetsToLink.get(i);
+					
+					className = (String) PropertyUtils.getProperty(item, "className");
+					fieldName = (String) PropertyUtils.getProperty(item, "fieldName");
+					ids = (ArrayList<String>) PropertyUtils.getProperty(item, "ids");
+					
 					// we retrieve the canonical uri from parent
-					canonicalURIFromSonObject = this.urisFactoryClient.getCanonicalUriByResource(ids.get(j), className);
-					RDFNode node = model.createResource(canonicalURIFromSonObject);
-					resource.addProperty(property, node);
-				}
-			} 
-			
-			// we save the new model
-			String localUri = this.urisFactoryClient.getLocalStorageUriByResource(objectIdParent, classNameParent);
-			trellisLinkOperations.updateLinksEntry(model, localUri);
+					String canonicalURIFromParent = this.urisFactoryClient.getCanonicalUriByResource(objectIdParent, classNameParent);
+					Resource resource = model.getResource(canonicalURIFromParent);
+					
+					// we create the property in uri's factory
+					String canonicalURIProperty = TriplesStorageUtils.removeLastWordFromUri(this.urisFactoryClient.createProperty(fieldName));				
+					
+					final Property property = model.createProperty(canonicalURIProperty, fieldName);
+					
+					// we add the nodes
+					String canonicalURIFromSonObject;
+					for(int j=0; j < ids.size(); j++) {
+						// we retrieve the canonical uri from parent
+						canonicalURIFromSonObject = this.urisFactoryClient.getCanonicalUriByResource(ids.get(j), className);
+						RDFNode node = model.createResource(canonicalURIFromSonObject);
+						resource.addProperty(property, node);
+					}
+				} 
+				
+				// we save the new model
+				String localUri = this.urisFactoryClient.getLocalStorageUriByResource(objectIdParent, classNameParent);
+				trellisLinkOperations.updateLinksEntry(model, localUri);
+			} else {
+				this.logger.error("Error retrieving model from {}", message);
+			}
 			
 		} catch (Exception e) {
 			this.logger.error("Error saving links cause: {}", e.getMessage());
