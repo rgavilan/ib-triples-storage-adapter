@@ -167,22 +167,24 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 					fieldName = (String) PropertyUtils.getProperty(item, "fieldName");
 					ids = (ArrayList<String>) PropertyUtils.getProperty(item, "ids");
 					
-					// we retrieve the canonical uri from parent
-					String canonicalURIFromParent = this.urisFactoryClient.getCanonicalUriByResource(objectIdParent, classNameParent);
-					Resource resource = model.getResource(canonicalURIFromParent);
-					
-					// we create the property in uri's factory
-					String canonicalURIProperty = TriplesStorageUtils.removeLastWordFromUri(this.urisFactoryClient.createProperty(fieldName));				
-					
-					final Property property = model.createProperty(canonicalURIProperty, fieldName);
-					
-					// we add the nodes
-					String canonicalURIFromSonObject;
-					for(int j=0; j < ids.size(); j++) {
+					if(ids != null && ids.size() > 0) {
 						// we retrieve the canonical uri from parent
-						canonicalURIFromSonObject = this.urisFactoryClient.getCanonicalUriByResource(ids.get(j), className);
-						RDFNode node = model.createResource(canonicalURIFromSonObject);
-						resource.addProperty(property, node);
+						String canonicalURIFromParent = this.urisFactoryClient.getCanonicalUriByResource(objectIdParent, classNameParent);
+						Resource resource = model.getResource(canonicalURIFromParent);
+						
+						// we create the property in uri's factory
+						String canonicalURIProperty = TriplesStorageUtils.removeLastWordFromUri(this.urisFactoryClient.createProperty(fieldName));				
+						
+						final Property property = model.createProperty(canonicalURIProperty, fieldName);
+						
+						// we add the nodes
+						String canonicalURIFromSonObject;
+						for(int j=0; j < ids.size(); j++) {
+							// we retrieve the canonical uri from parent
+							canonicalURIFromSonObject = this.urisFactoryClient.getCanonicalUriByResource(ids.get(j), className);
+							RDFNode node = model.createResource(canonicalURIFromSonObject);
+							resource.addProperty(property, node);
+						}						
 					}
 				} 
 				
