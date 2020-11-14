@@ -58,17 +58,6 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	}
 
 	
-	/**
-	 * Gets the local storage uri by resource.
-	 *
-	 * @param id the id
-	 * @param className the class name
-	 * @return the local storage uri by resource
-	 */
-	public String getLocalStorageUriByResource(String id, String className) {
-		return this.getUriByResource(id, className, Constants.LOCAL_Uri, Constants.REFERENCE);
-	}
-	
 	public String getLocalStorageUriByEntityId(String entityId, String className) {
 		return this.getUriByResource(entityId, className, Constants.LOCAL_Uri, Constants.REFERENCE);
 	}

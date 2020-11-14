@@ -194,7 +194,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 				} 
 				
 				// we save the new model
-				String localUri = this.urisFactoryClient.getLocalStorageUriByResource(objectIdParent, classNameParent);
+				String localUri = this.urisFactoryClient.getLocalStorageUriByEntityId(objectIdParent, classNameParent);
 				trellisLinkOperations.updateLinksEntry(model, localUri);
 			} else {
 				this.logger.error("Error retrieving model from {}", message);
