@@ -1,5 +1,6 @@
 package es.um.asio.service.trellis.util;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -13,6 +14,12 @@ public class TrellisCacheImpl implements TrellisCache {
 	
 	private Map<String, Object> cacheProperties;
 	
+	
+	public TrellisCacheImpl() {
+		this.cacheTrellisContainers = new HashMap<>();
+		this.cacheProperties = new HashMap<>();
+	}
+
 	@Override
 	public Object find(String key, String cacheName) {		
 		return this.retrieveCache(cacheName).get(key);
