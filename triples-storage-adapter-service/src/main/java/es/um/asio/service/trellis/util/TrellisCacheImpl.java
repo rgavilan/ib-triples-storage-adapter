@@ -10,14 +10,20 @@ import es.um.asio.abstractions.constants.Constants;
 @Service
 public class TrellisCacheImpl implements TrellisCache {
 
+	// key = container name
 	private Map<String, Object> cacheTrellisContainers;
 	
+	// key property name
 	private Map<String, Object> cacheProperties;
+	
+	// key entityId-className
+	private Map<String, Object> cacheCanonicalLocalUris;
 	
 	
 	public TrellisCacheImpl() {
 		this.cacheTrellisContainers = new HashMap<>();
 		this.cacheProperties = new HashMap<>();
+		this.cacheCanonicalLocalUris = new HashMap<>();
 	}
 
 	@Override
@@ -36,6 +42,8 @@ public class TrellisCacheImpl implements TrellisCache {
 				return cacheTrellisContainers;
 			case Constants.CACHE_PROPERTIES:
 				return cacheProperties;
+			case Constants.CACHE_CANONICAL_LOCAL_URIS:
+				return cacheCanonicalLocalUris;
 			default:
 				return null;
 			}

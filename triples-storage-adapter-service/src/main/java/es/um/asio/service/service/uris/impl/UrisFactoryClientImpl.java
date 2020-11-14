@@ -59,7 +59,7 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 
 	
 	public String getLocalStorageUriByEntityId(String entityId, String className) {
-		return this.getUriByResource(entityId, className, Constants.LOCAL_Uri, Constants.REFERENCE);
+		return getUriHelper(entityId, className, Constants.LOCAL_Uri);
 	}
 	
 	/**
@@ -70,7 +70,16 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	 * @return the canonical uri by resource
 	 */
 	public String getCanonicalUriByResource(String id, String className) {
-		return this.getUriByResource(id, className, "canonicalURILanguageStr", Constants.REFERENCE);
+		return getUriHelper(id, className, Constants.CANONICAL_URI_LANGUAGE_STR);
+	}
+	
+	private String getUriHelper(String id, String className, String typeUri) {
+		Object result = this.trellisCache.find(this.buildKeyForCanonicalLocalUri(id, className), Constants.CACHE_CANONICAL_LOCAL_URIS);
+		if(result != null && result instanceof LinkedHashMap) {
+			return (String)((LinkedHashMap<String, Object>) result).get(typeUri);
+		} else {
+			return this.getUriByResource(id, className, typeUri, Constants.REFERENCE);			
+		}
 	}
 	
 	/**
@@ -92,9 +101,13 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 					.queryParam(typeId, id)
 					.queryParam(Constants.STORAGE_NAME, StorageType.TRELLIS.name().toLowerCase());
 
-			Map response = restUrisTemplate.getForObject(builder.toUriString(), Map.class);
+			Map response = restUrisTemplate.getForObject(builder.toUriString(), Map.class);						
 			ArrayList urisMap = (ArrayList) response.get(Constants.LOCAL_URIS);
 			result = (String) ((LinkedHashMap<String, Object>) urisMap.get(0)).get(typeURI);
+			
+			// we save in cache
+			this.trellisCache.saveInCache(this.buildKeyForCanonicalLocalUri(id, className), urisMap.get(0), Constants.CACHE_CANONICAL_LOCAL_URIS);
+			
 		} catch (RestClientException e) {
 			logger.error("Error retrieving getUriByResource(id={}, class={}) ", id, className);
 			logger.error("getUriByResource", e);
@@ -162,5 +175,9 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 		
     	Object response = restUrisTemplate.postForObject(builder.toUriString(), obj, Object.class);
     	this.logger.info(response.toString());
+    }
+    
+    private String buildKeyForCanonicalLocalUri(String entityId, String className) {
+    	return entityId + "-" + className;
     }
 }
