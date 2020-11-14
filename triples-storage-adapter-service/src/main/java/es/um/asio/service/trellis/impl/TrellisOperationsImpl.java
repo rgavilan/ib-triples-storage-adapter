@@ -19,6 +19,7 @@ import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.service.service.uris.UrisFactoryClient;
 import es.um.asio.service.trellis.TrellisCommonOperations;
 import es.um.asio.service.trellis.TrellisOperations;
+import es.um.asio.service.trellis.util.TrellisCache;
 import es.um.asio.service.util.MediaTypes;
 import es.um.asio.service.util.RdfObjectMapper;
 import es.um.asio.service.util.TriplesStorageUtils;
@@ -39,12 +40,14 @@ public class TrellisOperationsImpl implements TrellisOperations {
     @Autowired
     private UrisFactoryClient urisFactoryClient;
     
+    @Autowired
+    private TrellisCache trellisCache;
+    
     /** The trellis url end point. */
     @Value("${app.trellis.endpoint}")
     private String trellisUrlEndPoint;
     
-    
-   
+       
     /**
      * Exists container.
      *
@@ -53,21 +56,25 @@ public class TrellisOperationsImpl implements TrellisOperations {
      */
     @Override
     public boolean existsContainer(ManagementBusEvent message) {
-        boolean result = false;
+        boolean result = (boolean) trellisCache.find(message.getClassName(), Constants.CACHE_TRELLIS_CONTAINER);
         
-        String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName());
-        Model model;
-        try {
-            model = trellisCommonOperations.createRequestSpecification()
-                    .header("Accept", MediaTypes.TEXT_TURTLE)
-                    .expect()
-                    .when().get(urlContainer)
-                    .as(Model.class, new RdfObjectMapper(urlContainer));
-                    result = model.size() > 0;
-        } catch (Exception e) {
-            result = false;
+        if(!result) {
+        	String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName());
+        	Model model;
+        	try {
+        		model = trellisCommonOperations.createRequestSpecification()
+        				.header("Accept", MediaTypes.TEXT_TURTLE)
+        				.expect()
+        				.when().get(urlContainer)
+        				.as(Model.class, new RdfObjectMapper(urlContainer));
+        		result = model.size() > 0;
+        	} catch (Exception e) {
+        		result = false;
+        	} finally {
+        		trellisCache.saveInCache(message.getClassName(), result, Constants.CACHE_TRELLIS_CONTAINER);				
+			}       	
         }
-        
+                
         return result;  
     }
 
