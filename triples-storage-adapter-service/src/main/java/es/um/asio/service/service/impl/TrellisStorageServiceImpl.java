@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import es.um.asio.abstractions.constants.Constants;
 import es.um.asio.abstractions.domain.ManagementBusEvent;
+import es.um.asio.abstractions.perfomance.WatchDog;
 import es.um.asio.service.service.TriplesStorageService;
 import es.um.asio.service.service.uris.UrisFactoryClient;
 import es.um.asio.service.trellis.TrellisLinkOperations;
@@ -144,7 +145,9 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void saveLinks(ManagementBusEvent message) {
 		logger.info("Saving links in trellis: {}", message.getClassName());
-			
+		WatchDog saveLinksWatchDog = new WatchDog();
+		
+		
 		try {
 			Object obj = message.getLinkedModel();
 			final String objectIdParent = this.safetyCheck(PropertyUtils.getProperty(obj, Constants.ID));
@@ -199,5 +202,12 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			this.logger.error("Error saving links cause: {}", e.getMessage());
 			this.logger.error("saveLinks", e);
 		}
+		
+		// we print the watchdog results
+		saveLinksWatchDog.takeTime("saveLinks");
+		this.logger.warn("-----------------------------------------------------------------------");
+		saveLinksWatchDog.printnResults(this.logger);
+		this.logger.warn("-----------------------------------------------------------------------");
+		
 	}
 }

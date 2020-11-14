@@ -19,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import es.um.asio.abstractions.constants.Constants;
 import es.um.asio.abstractions.storage.StorageType;
 import es.um.asio.service.service.uris.UrisFactoryClient;
+import es.um.asio.service.trellis.util.TrellisCache;
 
 @Service
 public class UrisFactoryClientImpl implements UrisFactoryClient {
@@ -47,6 +48,9 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	/** Rest Template. */
 	@Autowired
 	private RestTemplate restUrisTemplate;
+	
+	@Autowired
+	private TrellisCache trellisCache;
 
 	@Bean
 	public RestTemplate restUrisTemplate() {
@@ -121,24 +125,30 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	 */
 	@Override
 	public String createProperty(String fieldName) {
-		// cacheable
 		String result = StringUtils.EMPTY;
 		
-		try {
-			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uriProperty)
-					.queryParam(Constants.DOMAIN, Constants.DOMAIN_VALUE)
-					.queryParam(Constants.SUBDOMAIN, Constants.SUBDOMAIN_VALUE)
-					.queryParam(Constants.LANG, Constants.SPANISH_LANGUAGE);
-			
-			Map<String, String> obj = new HashMap<>();
-			obj.put("property", fieldName);	
-			
-			Map response = restUrisTemplate.postForObject(builder.toUriString(), obj, Map.class);			
-			result = (String) response.get(Constants.CANONICAL_LANGUAGE_URI);
-			
-		} catch (RestClientException e) {
-			logger.error("Error creating property {} cause: {} ", fieldName, e.getMessage());
-			logger.error("createProperty", e);
+		Object cachedResult = this.trellisCache.find(fieldName, Constants.CACHE_PROPERTIES);
+		if(cachedResult == null) {
+			try {
+				UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uriProperty)
+						.queryParam(Constants.DOMAIN, Constants.DOMAIN_VALUE)
+						.queryParam(Constants.SUBDOMAIN, Constants.SUBDOMAIN_VALUE)
+						.queryParam(Constants.LANG, Constants.SPANISH_LANGUAGE);
+				
+				Map<String, String> obj = new HashMap<>();
+				obj.put("property", fieldName);	
+				
+				Map response = restUrisTemplate.postForObject(builder.toUriString(), obj, Map.class);			
+				result = (String) response.get(Constants.CANONICAL_LANGUAGE_URI);
+				
+				// we save the value in the cache
+				this.trellisCache.saveInCache(fieldName, result, Constants.CACHE_PROPERTIES);
+			} catch (RestClientException e) {
+				logger.error("Error creating property {} cause: {} ", fieldName, e.getMessage());
+				logger.error("createProperty", e);
+			}			
+		} else {
+			result = (String)cachedResult;
 		}
 		
 		return result;
