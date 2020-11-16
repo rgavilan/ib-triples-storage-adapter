@@ -56,9 +56,9 @@ public class TrellisOperationsImpl implements TrellisOperations {
      */
     @Override
     public boolean existsContainer(ManagementBusEvent message) {
-        boolean result = (boolean) trellisCache.find(message.getClassName(), Constants.CACHE_TRELLIS_CONTAINER);
+        Boolean result = (Boolean) trellisCache.find(message.getClassName(), Constants.CACHE_TRELLIS_CONTAINER);
         
-        if(!result) {
+        if(result == null || !result) {
         	String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName());
         	Model model;
         	try {
