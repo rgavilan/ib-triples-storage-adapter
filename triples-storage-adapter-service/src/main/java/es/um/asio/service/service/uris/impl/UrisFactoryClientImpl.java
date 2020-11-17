@@ -91,6 +91,9 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	 * @return the uri by resource 
 	 */
 	private String getUriByResource(String id, String className, String typeURI, String typeId) {
+		
+		logger.warn("getUriByResource(id={}, className={}, typeURI={}, typeId={})",id, className, typeURI, typeId);
+		
 		String result = StringUtils.EMPTY;
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(localResourceStorageUri)

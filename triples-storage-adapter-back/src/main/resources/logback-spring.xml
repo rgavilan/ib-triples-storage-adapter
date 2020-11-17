@@ -35,7 +35,7 @@
 	</appender>
 
 	<springProfile name="!des,!pre,!pro">
-		<logger name="es.um.asio" level="WARN" />
+		<logger name="es.um.asio" level="INFO" />
 		<logger name="org.springframework.web" level="INFO" />
 		<logger name="org.hibernate" level="INFO" />
 		<logger name="org.springframework.data.solr" level="DEBUG" />
