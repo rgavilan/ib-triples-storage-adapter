@@ -59,6 +59,7 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 
 	
 	public String getLocalStorageUriByEntityId(String entityId, String className) {
+		this.logger.warn("getLocalStorageUriByEntityId entityId={}, className={}", entityId, className);
 		return getUriHelper(entityId, className, Constants.LOCAL_Uri);
 	}
 	
@@ -70,10 +71,12 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	 * @return the canonical uri by resource
 	 */
 	public String getCanonicalUriByResource(String id, String className) {
+		this.logger.warn("getCanonicalUriByResource id={}, className={}", id, className);
 		return getUriHelper(id, className, Constants.CANONICAL_URI_LANGUAGE_STR);
 	}
 	
 	private String getUriHelper(String id, String className, String typeUri) {
+		this.logger.warn("getUriHelper 2 id={}, className={}, typeUri={}", id, className, typeUri);
 		Object result = this.trellisCache.find(this.buildKeyForCanonicalLocalUri(id, className), Constants.CACHE_CANONICAL_LOCAL_URIS);
 		if(result != null && result instanceof LinkedHashMap) {
 			return (String)((LinkedHashMap<String, Object>) result).get(typeUri);

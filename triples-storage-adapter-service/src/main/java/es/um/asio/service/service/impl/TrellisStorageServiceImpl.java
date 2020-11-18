@@ -183,11 +183,13 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 						// we add the nodes
 						String canonicalURIFromSonObject;
 						for(int j=0; j < ids.size(); j++) {
-							// we retrieve the canonical uri from parent
-							canonicalURIFromSonObject = this.urisFactoryClient.getCanonicalUriByResource(ids.get(j), className);
-							if(StringUtils.isNotBlank(canonicalURIFromSonObject)) {
-								RDFNode node = model.createResource(canonicalURIFromSonObject);
-								resource.addProperty(property, node);
+							if(StringUtils.isNotBlank(ids.get(j)) && StringUtils.isNotBlank(className)) {
+								// we retrieve the canonical uri from parent
+								canonicalURIFromSonObject = this.urisFactoryClient.getCanonicalUriByResource(ids.get(j), className);
+								if(StringUtils.isNotBlank(canonicalURIFromSonObject)) {
+									RDFNode node = model.createResource(canonicalURIFromSonObject);
+									resource.addProperty(property, node);
+								}								
 							}
 						}						
 					}
