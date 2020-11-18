@@ -178,20 +178,22 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 						// we create the property in uri's factory
 						String canonicalURIProperty = TriplesStorageUtils.removeLastWordFromUri(this.urisFactoryClient.createProperty(fieldName));				
 						
-						final Property property = model.createProperty(canonicalURIProperty, fieldName);
-						
-						// we add the nodes
-						String canonicalURIFromSonObject;
-						for(int j=0; j < ids.size(); j++) {
-							if(StringUtils.isNotBlank(ids.get(j)) && StringUtils.isNotBlank(className)) {
-								// we retrieve the canonical uri from parent
-								canonicalURIFromSonObject = this.urisFactoryClient.getCanonicalUriByResource(ids.get(j), className);
-								if(StringUtils.isNotBlank(canonicalURIFromSonObject)) {
-									RDFNode node = model.createResource(canonicalURIFromSonObject);
-									resource.addProperty(property, node);
-								}								
-							}
-						}						
+						if(StringUtils.isNotBlank(canonicalURIProperty)) {
+							final Property property = model.createProperty(canonicalURIProperty, fieldName);
+							
+							// we add the nodes
+							String canonicalURIFromSonObject;
+							for(int j=0; j < ids.size(); j++) {
+								if(StringUtils.isNotBlank(ids.get(j)) && StringUtils.isNotBlank(className)) {
+									// we retrieve the canonical uri from parent
+									canonicalURIFromSonObject = this.urisFactoryClient.getCanonicalUriByResource(ids.get(j), className);
+									if(StringUtils.isNotBlank(canonicalURIFromSonObject)) {
+										RDFNode node = model.createResource(canonicalURIFromSonObject);
+										resource.addProperty(property, node);
+									}								
+								}
+							}													
+						}
 					}
 				} 
 				
