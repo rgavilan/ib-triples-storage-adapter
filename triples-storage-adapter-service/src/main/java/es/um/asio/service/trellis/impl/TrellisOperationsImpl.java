@@ -16,6 +16,7 @@ import com.jayway.restassured.response.Response;
 
 import es.um.asio.abstractions.constants.Constants;
 import es.um.asio.abstractions.domain.ManagementBusEvent;
+import es.um.asio.abstractions.perfomance.WatchDog;
 import es.um.asio.service.service.uris.UrisFactoryClient;
 import es.um.asio.service.trellis.TrellisCommonOperations;
 import es.um.asio.service.trellis.TrellisOperations;
@@ -86,6 +87,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
     @Override
     public void createContainer(ManagementBusEvent message) {
         logger.info("Creating a container");
+        WatchDog createContainerWatchDog = new WatchDog();
         
         Model model = ModelFactory.createDefaultModel();
         model.createProperty("http://hercules.org");
@@ -114,6 +116,13 @@ public class TrellisOperationsImpl implements TrellisOperations {
         } catch (Exception e) {
             logger.error("createContainer:" , e);
         }
+        
+        createContainerWatchDog.takeTime("createContainer");
+        
+        // we print the watchdog results
+        this.logger.warn("-----------------------------------------------------------------------");
+        createContainerWatchDog.printnResults(this.logger);
+        this.logger.warn("-----------------------------------------------------------------------");
     }
 
     /**
@@ -123,6 +132,8 @@ public class TrellisOperationsImpl implements TrellisOperations {
      */
     @Override
     public void createEntry(ManagementBusEvent message) {
+    	WatchDog createEntryWatchDog = new WatchDog();
+    	
         Model model = triplesStorageUtils.toObject(message.getModel());
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName());
         
@@ -149,6 +160,13 @@ public class TrellisOperationsImpl implements TrellisOperations {
         } else {
             logger.info("GRAYLOG-TS Creado recurso en trellis de tipo: {}", message.getClassName());
         }
+        
+        createEntryWatchDog.takeTime("createEntry");
+        
+        // we print the watchdog results
+        this.logger.warn("-----------------------------------------------------------------------");
+        createEntryWatchDog.printnResults(this.logger);
+        this.logger.warn("-----------------------------------------------------------------------");
     }
 
     /**
@@ -158,6 +176,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
      */
     @Override
     public void updateEntry(ManagementBusEvent message) {
+    	WatchDog updateEntryWatchDog = new WatchDog();
         String resourceID = triplesStorageUtils.toResourceId(message.getIdModel());
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
         
@@ -173,7 +192,14 @@ public class TrellisOperationsImpl implements TrellisOperations {
             throw new RuntimeTrellisException("Error updating in Trellis the object: ".concat(message.getModel()));
         } else {
             logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: {}",message.getClassName());
-        }        
+        }
+        
+        updateEntryWatchDog.takeTime("updateEntry");
+        
+        // we print the watchdog results
+        this.logger.warn("-----------------------------------------------------------------------");
+        updateEntryWatchDog.printnResults(this.logger);
+        this.logger.warn("-----------------------------------------------------------------------");
     }
 
     /**
@@ -183,6 +209,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
      */
     @Override
     public void deleteEntry(ManagementBusEvent message) {
+    	WatchDog deleteEntryWatchDog = new WatchDog();
         String resourceID = triplesStorageUtils.toResourceId(message.getIdModel());
         String urlContainer =  trellisUrlEndPoint.concat("/").concat(message.getClassName()).concat("/").concat(resourceID);
         
@@ -195,6 +222,13 @@ public class TrellisOperationsImpl implements TrellisOperations {
             throw new RuntimeTrellisException("Error deleting in Trellis the object: ".concat(message.getClassName()).concat(" - ").concat(message.getIdModel()));
         } else {
             logger.info("GRAYLOG-TS Eliminado recurso en trellis de tipo: {}", message.getClassName());
-        }        
+        }
+        
+        deleteEntryWatchDog.takeTime("deleteEntry");
+        
+        // we print the watchdog results
+        this.logger.warn("-----------------------------------------------------------------------");
+        deleteEntryWatchDog.printnResults(this.logger);
+        this.logger.warn("-----------------------------------------------------------------------");
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.um.asio.abstractions.domain.ManagementBusEvent;
+import es.um.asio.abstractions.perfomance.WatchDog;
 import es.um.asio.service.proxy.TriplesStorageProxy;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -31,7 +32,14 @@ private final Logger logger = LoggerFactory.getLogger(MessageController.class);
     @PostMapping
     public void processMessage(@RequestBody @Validated(ManagementBusEvent.class) final ManagementBusEvent message) {
         try {
+        	WatchDog tripleStorageWatchDog = new WatchDog();
 			this.proxy.process(message);
+			tripleStorageWatchDog.takeTime("Save in tripleStorage adapter");
+			
+			// we print the watchdog results
+			this.logger.warn("-----------------------------------------------------------------------");
+			tripleStorageWatchDog.printnResults(this.logger);
+			this.logger.warn("-----------------------------------------------------------------------");
 		} catch (Exception e) {
 			logger.error("Error processing message: {} cause: {}",message,e.getMessage());
 			logger.error("processMessage: ",e);

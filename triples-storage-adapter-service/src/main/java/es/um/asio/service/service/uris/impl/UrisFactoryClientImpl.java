@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import es.um.asio.abstractions.constants.Constants;
+import es.um.asio.abstractions.perfomance.WatchDog;
 import es.um.asio.abstractions.storage.StorageType;
 import es.um.asio.service.service.uris.UrisFactoryClient;
 import es.um.asio.service.trellis.util.TrellisCache;
@@ -24,10 +25,7 @@ import es.um.asio.service.trellis.util.TrellisCache;
 @Service
 public class UrisFactoryClientImpl implements UrisFactoryClient {
 	
-	
 	private final Logger logger = LoggerFactory.getLogger(UrisFactoryClientImpl.class);
-	
-	
 	
 	/** The local resource storage uri. */
 	@Value("${app.generator-uris.endpoint-local-resource-storage-uri}")
@@ -169,6 +167,8 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
      * @param localUri the local uri
      */
     public void eventNotifyUrisFactory(String cannonicalLanguageURI, String localURI, String triplesStoreTarget) {
+    	WatchDog eventNotifyWatchDog = new WatchDog();
+    	
     	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uriFactoryEndpoint)
     			.queryParam(Constants.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI)
     			.queryParam(Constants.LOCAL_URI, localURI)
@@ -179,8 +179,14 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
     	obj.put(Constants.LOCAL_URI, localURI);
     	obj.put(Constants.STORAGE_NAME, triplesStoreTarget);
 		
-    	Object response = restUrisTemplate.postForObject(builder.toUriString(), obj, Object.class);
-    	this.logger.info(response.toString());
+    	restUrisTemplate.postForObject(builder.toUriString(), obj, Object.class);
+    	
+    	eventNotifyWatchDog.takeTime("eventNotify");
+
+    	// we print the watchdog results
+    	this.logger.warn("-----------------------------------------------------------------------");
+    	eventNotifyWatchDog.printnResults(this.logger);
+    	this.logger.warn("-----------------------------------------------------------------------");
     }
     
     private String buildKeyForCanonicalLocalUri(String entityId, String className) {
