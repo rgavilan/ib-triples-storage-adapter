@@ -16,7 +16,9 @@ import com.jayway.restassured.response.Response;
 
 import es.um.asio.abstractions.constants.Constants;
 import es.um.asio.abstractions.domain.ManagementBusEvent;
+import es.um.asio.abstractions.domain.Operation;
 import es.um.asio.abstractions.perfomance.WatchDog;
+import es.um.asio.service.service.discovery.DiscoveryClient;
 import es.um.asio.service.service.uris.UrisFactoryClient;
 import es.um.asio.service.trellis.TrellisCommonOperations;
 import es.um.asio.service.trellis.TrellisOperations;
@@ -40,6 +42,9 @@ public class TrellisOperationsImpl implements TrellisOperations {
     
     @Autowired
     private UrisFactoryClient urisFactoryClient;
+    
+    @Autowired
+    private DiscoveryClient discoveryClient;
     
     @Autowired
     private TrellisCache trellisCache;
@@ -139,12 +144,14 @@ public class TrellisOperationsImpl implements TrellisOperations {
         
         // we only retrieve the id 
         String id = message.getIdModel().split("/")[message.getIdModel().split("/").length - 1];
-        String factoryUriNotification = urlContainer.concat("/").concat(id);
+        String localTripleStorageUri = urlContainer.concat("/").concat(id);
         
         // we call to uri factory to notify the insertion
-        logger.info("FactoryUriNotification: canonicalUri {}, localUri {}", message.getIdModel(), factoryUriNotification);
-        this.urisFactoryClient.eventNotifyUrisFactory(message.getIdModel(), factoryUriNotification, Constants.TRELLIS);
+        logger.info("FactoryUriNotification: canonicalUri {}, localUri {}", message.getIdModel(), localTripleStorageUri);
+        this.urisFactoryClient.eventNotifyUrisFactory(message.getIdModel(), localTripleStorageUri, Constants.TRELLIS);
         
+        // we call the discovery library in order to notify the insertion
+        this.discoveryClient.eventNotifyDiscovery(Operation.INSERT, message.getClassName(), localTripleStorageUri, Constants.SUBDOMAIN_VALUE, Constants.TRELLIS);
         
         Response postResponse = trellisCommonOperations.createRequestSpecification()
                 .contentType(MediaTypes.TEXT_TURTLE)
@@ -157,6 +164,8 @@ public class TrellisOperationsImpl implements TrellisOperations {
             logger.warn("cause: {}", postResponse.getBody().asString());
             logger.warn("Warn: saving in Trellis the object: {}",message.getModel());
 
+            // FIXME ask Dani, Is the order important? Why don't put here the notification statements?
+            
         } else {
             logger.info("GRAYLOG-TS Creado recurso en trellis de tipo: {}", message.getClassName());
         }

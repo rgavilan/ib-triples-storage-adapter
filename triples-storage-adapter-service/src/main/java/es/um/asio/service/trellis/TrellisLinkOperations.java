@@ -3,13 +3,22 @@ package es.um.asio.service.trellis;
 import org.apache.jena.rdf.model.Model;
 
 public interface TrellisLinkOperations {
-
-	/**
-     * Creates the links entry.
+	
+    /**
+     * Retrieve object from tellis.
      *
-     * @param message the message
+     * @param id the id
+     * @param className the class name
+     * @return the model
      */
-    Model createLinksEntry(String id, String className);
+    Model retrieveObjectFromTellis(String id, String className);
     
-    void updateLinksEntry(Model model, String localUri);
+    /**
+     * Update links entry.
+     *
+     * @param model the model
+     * @param localUri the local uri
+     * @param className the class name
+     */
+    void updateLinksEntry(Model model, String localUri, String className);
 }

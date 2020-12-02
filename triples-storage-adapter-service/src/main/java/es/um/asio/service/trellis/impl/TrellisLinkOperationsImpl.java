@@ -15,6 +15,9 @@ import org.trellisldp.api.RuntimeTrellisException;
 
 import com.jayway.restassured.response.Response;
 
+import es.um.asio.abstractions.constants.Constants;
+import es.um.asio.abstractions.domain.Operation;
+import es.um.asio.service.service.discovery.DiscoveryClient;
 import es.um.asio.service.service.uris.UrisFactoryClient;
 import es.um.asio.service.trellis.TrellisCommonOperations;
 import es.um.asio.service.trellis.TrellisLinkOperations;
@@ -41,6 +44,9 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
     
     @Autowired
     private UrisFactoryClient urisFactoryClient;
+    
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
 	
 
@@ -51,7 +57,7 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
 	 * @return the model
 	 */
 	@Override
-	public Model createLinksEntry(String objectId, String className) {
+	public Model retrieveObjectFromTellis(String objectId, String className) {
 		Model result = null;
 		
 		try {
@@ -96,7 +102,7 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
      * @param message the message
      */
    
-    public void updateLinksEntry(Model model, String localUri) {
+    public void updateLinksEntry(Model model, String localUri, String className) {
     	String urlContainer = localUri;
                
         Response postResponse = trellisCommonOperations.createRequestSpecification()
@@ -108,6 +114,10 @@ public class TrellisLinkOperationsImpl implements TrellisLinkOperations {
             logger.error("Error updating links entry cause: {}", postResponse.getBody().asString());
             throw new RuntimeTrellisException("Error updating in Trellis the object:".concat(localUri));
         } else {
+        	
+        	// we call the discovery library in order to notify the updating
+        	this.discoveryClient.eventNotifyDiscovery(Operation.UPDATE, className, localUri, Constants.SUBDOMAIN_VALUE, Constants.TRELLIS);
+        	
             logger.info("GRAYLOG-TS Actualizado recurso en trellis de tipo: {}", localUri);
         }        
     }

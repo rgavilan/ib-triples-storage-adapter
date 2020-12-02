@@ -152,7 +152,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 			Object obj = message.getLinkedModel();
 			final String objectIdParent = this.safetyCheck(PropertyUtils.getProperty(obj, Constants.ID));
 			final String classNameParent = (String) PropertyUtils.getProperty(obj, Constants.CLASS);
-			Model model = trellisLinkOperations.createLinksEntry(objectIdParent, classNameParent);
+			Model model = trellisLinkOperations.retrieveObjectFromTellis(objectIdParent, classNameParent);
 			
 			if(model != null) {
 				String className = null;
@@ -199,7 +199,7 @@ public class TrellisStorageServiceImpl implements TriplesStorageService {
 				
 				// we save the new model
 				String localUri = this.urisFactoryClient.getLocalStorageUriByEntityId(objectIdParent, classNameParent);
-				trellisLinkOperations.updateLinksEntry(model, localUri);
+				trellisLinkOperations.updateLinksEntry(model, localUri, classNameParent);
 			} else {
 				this.logger.error("Error retrieving model from {}", message);
 			}

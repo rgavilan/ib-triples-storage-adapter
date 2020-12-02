@@ -42,6 +42,11 @@ app:
     endpoint-local-resource-storage-uri: ${app.generator-uris.endpoint}/uri-factory/local/resource
     endpoint-local-property-storage-uri: ${app.generator-uris.endpoint}/uri-factory/local/property
     endpoint-property: ${app.generator-uris.endpoint}/uri-factory/canonical/property
+  # discovery library
+  discovery:
+    nodes:
+    - http://localhost:9327/discovery/entity/change
+    - http://localhost:9327/discovery/entity/change
   # delta  
   delta:
     mockup-file-path: C:\\tmp\\input.json
