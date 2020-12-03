@@ -151,7 +151,7 @@ public class TrellisOperationsImpl implements TrellisOperations {
         this.urisFactoryClient.eventNotifyUrisFactory(message.getIdModel(), localTripleStorageUri, Constants.TRELLIS);
         
         // we call the discovery library in order to notify the insertion
-        this.discoveryClient.eventNotifyDiscovery(Operation.INSERT, message.getClassName(), localTripleStorageUri, Constants.SUBDOMAIN_VALUE, Constants.TRELLIS);
+        // this.discoveryClient.eventNotifyDiscovery(Operation.INSERT, message.getClassName(), localTripleStorageUri, Constants.SUBDOMAIN_VALUE, Constants.TRELLIS);
         
         Response postResponse = trellisCommonOperations.createRequestSpecification()
                 .contentType(MediaTypes.TEXT_TURTLE)
