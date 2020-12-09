@@ -84,6 +84,7 @@ Será preciso configurar las siguientes variables de entorno cuando se instale e
 | `APP_WIKIBASE_API_PASSWORD`               | Contraseña para usuario en Wikibase                                                                           | WikibaseDockerAdminPass                  |
 | `APP_WIKIBASE_API_QUERY_DEFAULT_LANGUAGE` | Lenguaje por defecto en Wikibase                                                                              | es                                       |
 | `APP_WIKIBASE_API_SITE_URI`               | URL del servicio de entidad en Wikibase                                                                       | http://localhost:8181/entity/            |
+| `APP_GENERATOR_URIS_ENDPOINT`    | URL del servicio de uris                                                             | http://localhost:9326 |
 | `APP_GENERATOR_URIS_ENDPOINT_LINK_URI`    | URL del servicio de uris para enlazar url canónica                                                            | http://localhost:9326/uri-factory/local/ |
 | `APP_DISCOVERY_NODES`    | Array de endPoints para notificar los cambios a la libreria de descubrimiento                                                            | - http://localhost:9327/discovery/entity/change - http://localhost:9327/discovery/entity/change |
 ### Ejecución
