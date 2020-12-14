@@ -17,6 +17,7 @@
 	<packaging>pom</packaging>
 	<name>UM - ASIO - triples-storage-adapter</name>
 	<description>UM - ASIO - triples-storage-adapter</description>
+	<url>https://www.um.es/web/hercules/</url>
 
 	<scm>
 		<url>scm:git:https://github.com/HerculesCRUE/ib-triples-storage-adapter.git</url>
