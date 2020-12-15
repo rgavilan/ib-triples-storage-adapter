@@ -1,2 +1,7 @@
 ---
 app:
+ 
+  # Wikibase
+  wikibase:
+    query:
+      default-language: es
