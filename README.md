@@ -13,6 +13,10 @@
 
 # ASIO - Triples Storage Adapter
 
+|     | Master |
+| --- | ------ |
+| Quality Gate | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=HerculesCRUE_ib-triples-storage-adapter&metric=alert_status)](https://sonarcloud.io/dashboard?id=HerculesCRUE_ib-triples-storage-adapter) |
+
 Storage adapter para el almacenamiento de tripletas para el proyecto Backend SGI (ASIO).
 
 ## OnBoarding
