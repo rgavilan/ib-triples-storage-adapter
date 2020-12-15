@@ -24,29 +24,29 @@ import es.um.asio.service.trellis.util.TrellisCache;
 
 @Service
 public class UrisFactoryClientImpl implements UrisFactoryClient {
-	
+
 	private final Logger logger = LoggerFactory.getLogger(UrisFactoryClientImpl.class);
-	
+
 	/** The local resource storage uri. */
 	@Value("${app.generator-uris.endpoint-local-resource-storage-uri}")
 	private String localResourceStorageUri;
-	
+
 	/** The local property storage uri. */
 	@Value("${app.generator-uris.endpoint-local-property-storage-uri}")
 	private String localPropertyStorageUri;
-	
+
 	/** The uri property. */
 	@Value("${app.generator-uris.endpoint-property}")
 	private String uriProperty;
-	
-    /** The uri factory endpoint. */
-    @Value("${app.generator-uris.endpoint-link-uri}")
-    private String uriFactoryEndpoint;
-	
+
+	/** The uri factory endpoint. */
+	@Value("${app.generator-uris.endpoint-link-uri}")
+	private String uriFactoryEndpoint;
+
 	/** Rest Template. */
 	@Autowired
 	private RestTemplate restUrisTemplate;
-	
+
 	@Autowired
 	private TrellisCache trellisCache;
 
@@ -55,16 +55,15 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 		return new RestTemplate();
 	}
 
-	
 	public String getLocalStorageUriByEntityId(String entityId, String className) {
 		this.logger.warn("getLocalStorageUriByEntityId entityId={}, className={}", entityId, className);
 		return getUriHelper(entityId, className, Constants.LOCAL_Uri);
 	}
-	
+
 	/**
 	 * Gets the canonical uri by resource.
 	 *
-	 * @param id the id
+	 * @param id        the id
 	 * @param className the class name
 	 * @return the canonical uri by resource
 	 */
@@ -72,29 +71,30 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 		this.logger.warn("getCanonicalUriByResource id={}, className={}", id, className);
 		return getUriHelper(id, className, Constants.CANONICAL_URI_LANGUAGE_STR);
 	}
-	
+
 	private String getUriHelper(String id, String className, String typeUri) {
 		this.logger.warn("getUriHelper 2 id={}, className={}, typeUri={}", id, className, typeUri);
-		Object result = this.trellisCache.find(this.buildKeyForCanonicalLocalUri(id, className), Constants.CACHE_CANONICAL_LOCAL_URIS);
-		if(result != null && result instanceof LinkedHashMap) {
-			return (String)((LinkedHashMap<String, Object>) result).get(typeUri);
+		Object result = this.trellisCache.find(this.buildKeyForCanonicalLocalUri(id, className),
+				Constants.CACHE_CANONICAL_LOCAL_URIS);
+		if (result != null && result instanceof LinkedHashMap) {
+			return (String) ((LinkedHashMap<String, Object>) result).get(typeUri);
 		} else {
-			return this.getUriByResource(id, className, typeUri, Constants.REFERENCE);			
+			return this.getUriByResource(id, className, typeUri, Constants.REFERENCE);
 		}
 	}
-	
+
 	/**
 	 * Gets the uri by resource.
 	 *
-	 * @param id the id
+	 * @param id        the id
 	 * @param className the class name
-	 * @param typeURI the type URI
-	 * @return the uri by resource 
+	 * @param typeURI   the type URI
+	 * @return the uri by resource
 	 */
 	private String getUriByResource(String id, String className, String typeURI, String typeId) {
-		
-		logger.warn("getUriByResource(id={}, className={}, typeURI={}, typeId={})",id, className, typeURI, typeId);
-		
+
+		logger.warn("getUriByResource(id={}, className={}, typeURI={}, typeId={})", id, className, typeURI, typeId);
+
 		String result = StringUtils.EMPTY;
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(localResourceStorageUri)
@@ -105,13 +105,15 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 					.queryParam(typeId, id)
 					.queryParam(Constants.STORAGE_NAME, StorageType.TRELLIS.name().toLowerCase());
 
-			Map response = restUrisTemplate.getForObject(builder.toUriString(), Map.class);						
-			ArrayList urisMap = (ArrayList) response.get(Constants.LOCAL_URIS);
-			result = (String) ((LinkedHashMap<String, Object>) urisMap.get(0)).get(typeURI);
-			
-			// we save in cache
-			this.trellisCache.saveInCache(this.buildKeyForCanonicalLocalUri(id, className), urisMap.get(0), Constants.CACHE_CANONICAL_LOCAL_URIS);
-			
+			Map response = restUrisTemplate.getForObject(builder.toUriString(), Map.class);
+			if (response != null) {
+				ArrayList urisMap = (ArrayList) response.get(Constants.LOCAL_URIS);
+				result = (String) ((LinkedHashMap<String, Object>) urisMap.get(0)).get(typeURI);
+
+				// we save in cache
+				this.trellisCache.saveInCache(this.buildKeyForCanonicalLocalUri(id, className), urisMap.get(0),
+						Constants.CACHE_CANONICAL_LOCAL_URIS);
+			}
 		} catch (RestClientException e) {
 			logger.error("Error retrieving getUriByResource(id={}, class={}) ", id, className);
 			logger.error("getUriByResource", e);
@@ -122,7 +124,6 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 		return result;
 	}
 
-
 	/**
 	 * Creates the property.
 	 *
@@ -132,64 +133,65 @@ public class UrisFactoryClientImpl implements UrisFactoryClient {
 	@Override
 	public String createProperty(String fieldName) {
 		String result = StringUtils.EMPTY;
-		
+
 		Object cachedResult = this.trellisCache.find(fieldName, Constants.CACHE_PROPERTIES);
-		if(cachedResult == null) {
+		if (cachedResult == null) {
 			try {
 				UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uriProperty)
 						.queryParam(Constants.DOMAIN, Constants.DOMAIN_VALUE)
 						.queryParam(Constants.SUBDOMAIN, Constants.SUBDOMAIN_VALUE)
 						.queryParam(Constants.LANG, Constants.SPANISH_LANGUAGE);
-				
+
 				Map<String, String> obj = new HashMap<>();
-				obj.put("property", fieldName);	
-				
-				Map response = restUrisTemplate.postForObject(builder.toUriString(), obj, Map.class);			
-				result = (String) response.get(Constants.CANONICAL_LANGUAGE_URI);
-				
-				// we save the value in the cache
-				this.trellisCache.saveInCache(fieldName, result, Constants.CACHE_PROPERTIES);
+				obj.put("property", fieldName);
+
+				Map response = restUrisTemplate.postForObject(builder.toUriString(), obj, Map.class);
+				if (response != null) {
+					result = (String) response.get(Constants.CANONICAL_LANGUAGE_URI);
+
+					// we save the value in the cache
+					this.trellisCache.saveInCache(fieldName, result, Constants.CACHE_PROPERTIES);
+				}
 			} catch (RestClientException e) {
 				logger.error("Error creating property {} cause: {} ", fieldName, e.getMessage());
 				logger.error("createProperty", e);
-			}			
+			}
 		} else {
-			result = (String)cachedResult;
+			result = (String) cachedResult;
 		}
-		
+
 		return result;
 	}
-	
-	 /**
-     * Event notify uris factory.
-     *
-     * @param canonicalUri the canonical uri
-     * @param localUri the local uri
-     */
-    public void eventNotifyUrisFactory(String cannonicalLanguageURI, String localURI, String triplesStoreTarget) {
-    	WatchDog eventNotifyWatchDog = new WatchDog();
-    	
-    	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uriFactoryEndpoint)
-    			.queryParam(Constants.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI)
-    			.queryParam(Constants.LOCAL_URI, localURI)
-    			.queryParam(Constants.STORAGE_NAME, triplesStoreTarget);
-    	
-    	Map<String, String> obj = new HashMap<>();
-    	obj.put(Constants.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI);
-    	obj.put(Constants.LOCAL_URI, localURI);
-    	obj.put(Constants.STORAGE_NAME, triplesStoreTarget);
-		
-    	restUrisTemplate.postForObject(builder.toUriString(), obj, Object.class);
-    	
-    	eventNotifyWatchDog.takeTime("eventNotify");
 
-    	// we print the watchdog results
-    	this.logger.warn("-----------------------------------------------------------------------");
-    	eventNotifyWatchDog.printnResults(this.logger);
-    	this.logger.warn("-----------------------------------------------------------------------");
-    }
-    
-    private String buildKeyForCanonicalLocalUri(String entityId, String className) {
-    	return entityId + "-" + className;
-    }
+	/**
+	 * Event notify uris factory.
+	 *
+	 * @param canonicalUri the canonical uri
+	 * @param localUri     the local uri
+	 */
+	public void eventNotifyUrisFactory(String cannonicalLanguageURI, String localURI, String triplesStoreTarget) {
+		WatchDog eventNotifyWatchDog = new WatchDog();
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uriFactoryEndpoint)
+				.queryParam(Constants.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI)
+				.queryParam(Constants.LOCAL_URI, localURI).queryParam(Constants.STORAGE_NAME, triplesStoreTarget);
+
+		Map<String, String> obj = new HashMap<>();
+		obj.put(Constants.CANONICAL_LANGUAGE_URI, cannonicalLanguageURI);
+		obj.put(Constants.LOCAL_URI, localURI);
+		obj.put(Constants.STORAGE_NAME, triplesStoreTarget);
+
+		restUrisTemplate.postForObject(builder.toUriString(), obj, Object.class);
+
+		eventNotifyWatchDog.takeTime("eventNotify");
+
+		// we print the watchdog results
+		this.logger.warn("-----------------------------------------------------------------------");
+		eventNotifyWatchDog.printnResults(this.logger);
+		this.logger.warn("-----------------------------------------------------------------------");
+	}
+
+	private String buildKeyForCanonicalLocalUri(String entityId, String className) {
+		return entityId + "-" + className;
+	}
 }
