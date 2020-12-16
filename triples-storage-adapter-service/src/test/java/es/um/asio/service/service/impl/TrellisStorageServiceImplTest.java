@@ -13,42 +13,35 @@ import es.um.asio.abstractions.domain.ManagementBusEvent;
 import es.um.asio.abstractions.domain.Operation;
 import es.um.asio.service.exception.TripleStoreException;
 import es.um.asio.service.service.uris.UrisFactoryClient;
+import es.um.asio.service.trellis.TrellisLinkOperations;
+import es.um.asio.service.trellis.TrellisOperations;
 import es.um.asio.service.util.TriplesStorageUtils;
 import es.um.asio.service.util.WikibaseUtils;
 import es.um.asio.service.wikibase.WikibaseOperations;
 
 @RunWith(SpringRunner.class)
 @ActiveProfiles("unit-test")
-public class WikibaseStorageServiceImplTest {
+public class TrellisStorageServiceImplTest {
 	
 	@Autowired
-	private WikibaseStorageServiceImpl wikibaseStorageServiceImpl;
+	private TrellisStorageServiceImpl trellisStorageServiceImpl;
 	
 	@MockBean
-	private TriplesStorageUtils triplesStorageUtils;
-    
-    /** 
-     * The wikibase utils. 
-    */
+	private TrellisOperations trellisOperations;
+	
+	/** The trellis link operations. */
 	@MockBean
-    private WikibaseUtils wikibaseUtils;
-    
-    /**
-     * Wikibase template
-     */
+	private TrellisLinkOperations trellisLinkOperations;
+	
 	@MockBean
-    private WikibaseOperations template;
-    
-    /** The uris factory client. */
-	@MockBean
-    private UrisFactoryClient urisFactoryClient;
+	private UrisFactoryClient urisFactoryClient;
 	
 	
 	@TestConfiguration
-	static class WikibaseStorageServiceImplTestConfig {
+	static class TrellisStorageServiceImplTestConfig {
 		@Bean
-		WikibaseStorageServiceImpl wikibaseStorageServiceImpl() {
-			return new WikibaseStorageServiceImpl();
+		TrellisStorageServiceImpl trellisStorageServiceImpl() {
+			return new TrellisStorageServiceImpl();
 		}
 	}
 	
@@ -59,7 +52,7 @@ public class WikibaseStorageServiceImplTest {
 		managementBusEvent.setOperation(Operation.DELETE);
 
 		managementBusEvent.setModel("");
-		wikibaseStorageServiceImpl.process(managementBusEvent);
+		trellisStorageServiceImpl.process(managementBusEvent);
 	}
 
 }
