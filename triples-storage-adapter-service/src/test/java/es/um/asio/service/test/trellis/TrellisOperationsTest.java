@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -74,7 +73,10 @@ public class TrellisOperationsTest {
     
     @Test
     public void whenCraeteContainer_thenNoError() {
-        this.trellisOperations.createContainer(this.generateEvent());
+        ManagementBusEvent event = this.generateEvent();
+        String originalIdModel = event.getIdModel();
+        this.trellisOperations.createContainer(event);
+        assertThat(event.getIdModel()).isEqualTo(originalIdModel);
     }
     
     @Test
