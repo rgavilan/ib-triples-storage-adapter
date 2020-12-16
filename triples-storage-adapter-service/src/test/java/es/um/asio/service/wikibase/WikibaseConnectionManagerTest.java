@@ -1,7 +1,6 @@
 package es.um.asio.service.wikibase;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,10 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
-
-import es.um.asio.abstractions.domain.ManagementBusEvent;
-import es.um.asio.abstractions.domain.Operation;
-import es.um.asio.service.exception.TripleStoreException;
 
 
 @RunWith(SpringRunner.class)
