@@ -1,8 +1,8 @@
 package es.um.asio.service.util;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -38,5 +38,31 @@ public class TripleStorageUtilsTest {
 		assertNotNull(result);
 	}
 	
+
+	@Test
+	public void toResourceIdTest() {
+		String id = "id";
+		String result = tripleStorageUtils.toResourceId(id);
+		assertNotNull(result);
+		assertTrue(result.contains(id));
+	}
+	
+
+	@Test
+	public void toResourceIdWithPadTest() {
+		String id = "no/ ?id#no";
+		String result = tripleStorageUtils.toResourceId(id);
+		assertNotNull(result);
+		assertEquals(result, "no_");
+	}
+	
+	@Test
+	public void removeLastWordFromUriTest() {
+		String firstUri = "http://newuri.com/project/";
+		String lastUri = "HERCULES";
+		String result = tripleStorageUtils.removeLastWordFromUri(firstUri + lastUri); 
+		assertNotNull(result);
+		assertEquals(result, firstUri);
+	}
 
 }
