@@ -3,7 +3,7 @@
 | Entregable     | Librería de conexión con Triple Store                        |
 | -------------- | ------------------------------------------------------------ |
 | Fecha          | 16/12/2020                                                   |
-| Proyecto       | [ASIO](https://www.um.es/web/hercules/proyectos/asio) (Arquitectura Semántica e Infraestructura Ontológica) en el marco de la iniciativa [Hércules](https://www.um.es/web/hercules/) para la Semántica de Datos de Investigación de Universidades que forma parte de [CRUE-TIC](http://www.crue.org/SitePages/ProyectoHercules.aspx) |
+| Proyecto       | [ASIO](https://www.um.es/web/hercules/proyectos/asio) (Arquitectura Semántica e Infraestructura Ontológica) en el marco de la iniciativa [Hércules](https://www.um.es/web/hercules/) para la Semántica de Datos de Investigación de Universidades que forma parte de [CRUE-TIC](https://www.crue.org/proyecto/hercules/) |
 | Módulo         | Storage adapter                                              |
 | Tipo           | Software                                                     |
 | Objetivo       | Storage adapter para el almacenamiento de tripletas para el proyecto Backend SGI (ASIO). |
