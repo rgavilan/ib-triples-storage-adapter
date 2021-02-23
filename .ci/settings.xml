@@ -20,7 +20,7 @@
         <repository>
           <id>github-asio-abstractions</id>
           <name>GitHub asio-abstractions Apache Maven Packages</name>
-          <url>https://maven.pkg.github.com/HerculesCRUE/ib-asio-abstractions</url>
+          <url>https://maven.pkg.github.com/rgavilan/ib-asio-abstractions</url>
         </repository>
       </repositories>
     </profile>
@@ -28,9 +28,9 @@
 
   <servers>
     <server>
-      <id>github</id>
+      <id>github-asio-abstractions</id>
       <username>${env.GITHUB_USER}</username>
-      <password>${env.GITHUB_TOKEN}</password>
+      <password>${env.GITHUB_USER_TOKEN}</password>
     </server>
   </servers>
 </settings>
